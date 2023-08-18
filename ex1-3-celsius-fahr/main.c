@@ -13,7 +13,7 @@ int main(void)
     step = 20;
 
     printf("Celcius to Fahrenheit\n");
-    printf("Fahrenheit\tCelcius\n");
+    printf("Fahrenheit\tCelsius\n");
 
     fahr = lower;
     while (fahr <= upper) {

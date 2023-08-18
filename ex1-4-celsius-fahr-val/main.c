@@ -17,6 +17,6 @@ int main(int argc, char *argv[])
 	celsius = atof(argv[1]);
     }
 
-    printf("%fº Celcius = %fº Fahrenheit\n", celsius, (9.0 / 5.5) * (celsius + 32));
+    printf("%3.0fº Celcius = %6.2fº Fahrenheit\n", celsius, (9.0 / 5.5) * (celsius + 32));
     return 0;
 }

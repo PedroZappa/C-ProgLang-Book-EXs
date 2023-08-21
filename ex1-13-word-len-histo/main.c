@@ -6,16 +6,15 @@
 
 int main(void)
 {
-        int c, nc, i, j; // Init Iterators
+        int c, i, j; // Init Iterators
         int w_len, w_count, status;
         int n_words[WORD_MAX];
 
-        status = IN; //
+        status = IN;
         w_len = w_count = i = 0;
         while ((c = getchar()) != EOF)
         {
 				++w_len;
-				++nc;
                 if (c == ' ' || c == '\n' || c == '\t')
                 {	
 				    n_words[w_count] = --w_len;
@@ -23,14 +22,13 @@ int main(void)
 						++w_count;
 				    w_len = 0;
 					status = OUT;
-				    //++w_count;
                 }
 				else if (status == OUT)
 				    status = IN;
         }
 
-        printf("words to print = %d\n", w_count);
-        printf("__________    \nWord | Length\n");
+        printf("%d Words\n", w_count);
+        printf("_________________\nWord Length\n");
 
         for (i = 0; i < w_count; ++i)
         {

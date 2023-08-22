@@ -10,108 +10,62 @@
 #define SPACE		' '
 #define TAB			'\t'
 #define NEW_LINE	'\n'
-#define NULL_CHAR	'\0'
 
-int ft_strlcpy(char to[], char from[], int size);
-int calc_spaces(int offset, int tabSize);
-int detab(char lines[MAX_NUM][MAX_LEN], int lineId, int tabSize);
 
 int main(void)
 {
-	printf("To detab:\n");
+	printf("To deTAB:\n");
 	
 	char lines[MAX_NUM][MAX_LEN];
-	int c, lineId, line_len, tabSize;
+	int c, i, offset, lineId, line_len, tabSize;
+	int space_c;
 
 	lineId = line_len = 0, tabSize = 8;
-	while ((c = getchar()) != EOF)
+	while ((line_len < MAX_LEN - 1) && (c = getchar()) != EOF)
 	{
-		lines[lineId][line_len] = c;
 		if (c == '\n')
 		{
 			lines[lineId][line_len] = '\0';
 			lineId++;
 			line_len = 0;
 		}
-		else ++line_len;
+		else if (c == '\t') 
+		{
+		    offset = TAB - (line_len % TAB);
+		    while(offset-- != 0) 
+		    {
+				lines[lineId][line_len] = SPACE;
+				++line_len;
+			}
+		}
+		else
+		{
+			lines[lineId][line_len] = c;
+			++line_len;
+		}
 	}
 
-	// Detab and print array of lines
-	printf("De-tabbed:\n");
-	printf("lineIds = %d\n", lineId);
-
-	detab(lines, lineId, tabSize);
+	// Print converted lines
+	printf("DeTAB\'ed:\n");
+	
+	// Testing: Get STATS
+	// Loop through lines and count amount of spaces per line
+	space_c = 0;
+	for (i = 0; i < lineId; ++i)
+	{
+		line_len = 0;
+		while (lines[i][line_len] != '\0')
+		{
+			if (lines[i][line_len] == SPACE)
+				++space_c;
+			++line_len;
+		}
+		printf("%s$\t", lines[i]);
+		printf("SPACES: %d\n", space_c);
+		space_c = 0;
+	}	
 
 	return 0;
 }
 
 
-int	ft_strlcopy(char *to, char *from, unsigned int size)
-{
-	unsigned int i;
-
-	i = 0;
-	if (size)
-	{
-		while (from[i] && (i < (size - 1)))
-		{
-		    to[i] = from[i];
-		    ++i;
-		}
-		to[i] = '\0';
-	}
-	while (from[i])
-		++i;
-	return (i);
-}
-
-int calc_spaces(int offset, int tabSize)
-{
-   return tabSize - (offset % tabSize);
-}
-
-
-int detab(char lines[MAX_NUM][MAX_LEN], int lineIds, int tabSize)
-{
-	int line, line_c, space_c, line_len, cpy_len, i;
-	char line_cpy[MAX_LEN];
-
-	cpy_len = 0;
-	for (line = 0; line < lineIds; ++line)
-	{
-		cpy_len = ft_strlcopy(line_cpy, lines[line], MAX_LEN);
-		line_c = space_c = line_len = 0;
-		while (line_cpy[line_c] != '\0')
-		{
-			if (line_c == TAB)
-			{
-				i = 0;
-				tabSize = calc_spaces(line_len, tabSize);
-				while (i < tabSize)
-				{
-					lines[line][line_c] = SPACE;
-					++line_len;
-					++line_c;
-				    ++i;
-				}
-			} 
-			else if (line_c == SPACE)
-			{
-				++line_len;
-				++line_c;
-				++space_c;
-			}
-			else
-			{
-				++line_len;
-		        ++line_c;
-			}
-		    line_cpy[line_c] = '\0';
-		}
-
-		printf("%s$", line_cpy);
-		printf("	Spaces = %d	Length = %d\n", space_c, cpy_len);
-	}
-
-	return line_len;
-}

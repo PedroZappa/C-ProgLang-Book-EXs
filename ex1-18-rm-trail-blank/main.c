@@ -1,4 +1,5 @@
-/* Program to remove trailing blanks and tabs from each input line, and to delete blank lines */
+/* Program to remove trailing blanks and tabs from 
+ * each input line, and to delete blank lines */
 #include <stdio.h>
 #define MAXLEN 1000
 
@@ -41,7 +42,8 @@ int ft_getline(char str[], int lim)
 	while ((c = getchar()) != EOF)
 	{
 		if (len == lim) break;
-		str[len++] = c;
+		str[len] = c;
+		++len;
 		if (c == '\n') break;
 	}
 	str[len] = '\0';

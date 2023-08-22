@@ -6,12 +6,13 @@
 #include <stdio.h>
 
 #define MAX_NUM		100
-#define MAX_LEN		1024
+#define MAX_LEN		512
 #define SPACE		' '
 #define TAB			'\t'
+#define NEW_LINE	'\n'
+#define NULL_CHAR	'\0'
 
-int calc_spaces(int offset, int tabSize);
-int ft_getline(char line[], int maxline);
+int detab(char *lines[MAX_LEN], int lineId, int tabSize);
 void copy(char to[], char from[]);
 
 
@@ -20,10 +21,9 @@ int main(void)
 	printf("To detab:\n");
 	
 	char lines[MAX_NUM][MAX_LEN];
-	//char line[MAX_LEN], result[MAX_LEN];
-	int c, lineId, line_len, i;
+	int c, i, lineId, line_len, tabSize;
 
-	lineId = line_len = 0;
+	lineId = line_len = 0, tabSize = 8;
 	while ((c = getchar()) != EOF)
 	{
 		lines[lineId][line_len] = c;
@@ -36,6 +36,9 @@ int main(void)
 		else ++line_len;
 	}
 
+	// Detab array of lines
+
+
 	printf("De-tabbed:\n");
 	for (i = 0; i < lineId; ++i)
 		printf("%s\n", lines[i]);
@@ -44,7 +47,43 @@ int main(void)
 }
 
 
-int calc_spaces(int offset, int tabSize)
+void copy(char to[], char from[])
 {
-	return tabSize - (offset % tabSize);
+	int i;
+
+	i = 0;
+	while ((to[i] = from[i]) != '\0')
+		++i;
+}
+
+
+int detab(char *lines[MAX_LEN], int lineId, int tabSize)
+{
+	int line, line_c, line_len, tab_c;
+	char line_cpy[MAX_LEN];
+
+	for (line = 0; line < lineId; ++line)
+	{
+		line_cpy = copy(line_cpy, lines[line]);
+		line_c = line_len = 0;
+		while (line_cpy[line_c] != '\0')
+		{
+			if (line_c == TAB)
+			{
+				tab_c = 0, tabSize = 8;
+				while (tab_c < tabSize)
+				{
+					lines[line][line_c] = SPACE;
+					++line_len;
+				    ++tab_c;
+				}
+				++line_c;
+			} else
+				++line_len
+		        ++line_c;
+			    
+		}
+	}
+
+	return
 }

@@ -12,16 +12,16 @@
 #define NEW_LINE	'\n'
 #define NULL_CHAR	'\0'
 
-int detab(char *lines[MAX_LEN], int lineId, int tabSize);
-void copy(char to[], char from[]);
-
+int ft_strlcpy(char to[], char from[], int size);
+int calc_spaces(int offset, int tabSize);
+int detab(char lines[MAX_NUM][MAX_LEN], int lineId, int tabSize);
 
 int main(void)
 {
 	printf("To detab:\n");
 	
 	char lines[MAX_NUM][MAX_LEN];
-	int c, i, lineId, line_len, tabSize;
+	int c, lineId, line_len, tabSize;
 
 	lineId = line_len = 0, tabSize = 8;
 	while ((c = getchar()) != EOF)
@@ -36,54 +36,82 @@ int main(void)
 		else ++line_len;
 	}
 
-	// Detab array of lines
-
-
+	// Detab and print array of lines
 	printf("De-tabbed:\n");
-	for (i = 0; i < lineId; ++i)
-		printf("%s\n", lines[i]);
+	printf("lineIds = %d\n", lineId);
+
+	detab(lines, lineId, tabSize);
 
 	return 0;
 }
 
 
-void copy(char to[], char from[])
+int	ft_strlcopy(char *to, char *from, unsigned int size)
 {
-	int i;
+	unsigned int i;
 
 	i = 0;
-	while ((to[i] = from[i]) != '\0')
+	if (size)
+	{
+		while (from[i] && (i < (size - 1)))
+		{
+		    to[i] = from[i];
+		    ++i;
+		}
+		to[i] = '\0';
+	}
+	while (from[i])
 		++i;
+	return (i);
+}
+
+int calc_spaces(int offset, int tabSize)
+{
+   return tabSize - (offset % tabSize);
 }
 
 
-int detab(char *lines[MAX_LEN], int lineId, int tabSize)
+int detab(char lines[MAX_NUM][MAX_LEN], int lineIds, int tabSize)
 {
-	int line, line_c, line_len, tab_c;
+	int line, line_c, space_c, line_len, cpy_len, i;
 	char line_cpy[MAX_LEN];
 
-	for (line = 0; line < lineId; ++line)
+	cpy_len = 0;
+	for (line = 0; line < lineIds; ++line)
 	{
-		line_cpy = copy(line_cpy, lines[line]);
-		line_c = line_len = 0;
+		cpy_len = ft_strlcopy(line_cpy, lines[line], MAX_LEN);
+		line_c = space_c = line_len = 0;
 		while (line_cpy[line_c] != '\0')
 		{
 			if (line_c == TAB)
 			{
-				tab_c = 0, tabSize = 8;
-				while (tab_c < tabSize)
+				i = 0;
+				tabSize = calc_spaces(line_len, tabSize);
+				while (i < tabSize)
 				{
 					lines[line][line_c] = SPACE;
 					++line_len;
-				    ++tab_c;
+					++line_c;
+				    ++i;
 				}
+			} 
+			else if (line_c == SPACE)
+			{
+				++line_len;
 				++line_c;
-			} else
-				++line_len
+				++space_c;
+			}
+			else
+			{
+				++line_len;
 		        ++line_c;
-			    
+			}
+		    line_cpy[line_c] = '\0';
 		}
+
+		printf("%s$", line_cpy);
+		printf("	Spaces = %d	Length = %d\n", space_c, cpy_len);
 	}
 
-	return
+	return line_len;
 }

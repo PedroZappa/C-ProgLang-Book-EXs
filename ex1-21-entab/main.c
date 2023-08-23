@@ -25,7 +25,7 @@ int	main(void)
 	c = len = sub_line = 0;
 	while ((c = getchar()) != EOF)
 	{
-		lines[sub_line][len] = c;
+		lines[sub_line][len] = c;		// Store char
 		if (c == '\n')
 		{
 			lines[sub_line][len] = '\0';// Null-terminate
@@ -63,8 +63,8 @@ int	main(void)
 				}
 				space_c = 0;
 				lines[i][lines_len[i]] = '\0';	// Null-terminate
-			}Get
-			j++;Get
+			}
+			j++;
 		}
 	}
 

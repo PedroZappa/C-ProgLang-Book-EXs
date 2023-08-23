@@ -2,110 +2,82 @@
  * number of tabs and blanks to achieve the same spacing. */
 #include <stdio.h>
 
-#define MAX_LINES	512
-#define MAX_LEN		512
-#define BLANK		' '
-#define NEWLINE		'\n'
-#define TAB			'\t'
+#define MAXLINE		512
 #define TAB_SIZE	8
 
-int	main()
+int	main(void)
 {
-	char lines[MAX_LINES][MAX_LEN];
-	//char temp_line[MAX_LEN];
-	char tabs_per_line[MAX_LEN];
-	char blanks_per_line[MAX_LEN];
-	char chars_per_line[MAX_LEN];
-	int c, i, j;				// Iterators
-	int line_id, line_len;		// Line Stats
-	int tab_c, space_c, char_c;	// Counters
-	int entab_len, space2tab;	// Entabbed Line Length
+	int c, i, j;					/* Iterators */
+	int space_c, space_t;			/* Space Counters */
+	int len, sub_line;				/* Line Counters */
+	int tab_c;						/* Tab Counter */
+	char lines[MAXLINE][MAXLINE];	/* Line Storage */
+	int lines_len[MAXLINE];			/* Line Lengths */
 
-	printf("Input to entab:\n");
+	printf("To entab:\n");
 
-	// Get each 'line' w/ stats
-	line_id = tab_c = space_c = line_len = 0;
-	while ((line_len < MAX_LEN - 1) && (c = getchar()) != EOF)
+	// Get lines from standard input
+	c = len = sub_line = 0;
+	while ((c = getchar()) != EOF)
 	{
-		if (c == BLANK)
+		lines[sub_line][len] = c;
+		if (c == '\n')
 		{
-			lines[line_id][line_len] = c;	
-			++space_c;
-			++line_len;
+			lines[sub_line][len] = '\0';// Null-terminate
+			lines_len[sub_line] = len;	// Store line length
+			sub_line++;					// Get next line
+			len = 0;
 		}
 		else
+			++len;
+	}
+
+	// Entab lines
+	for (i = 0; i < sub_line; i++)
+	{
+		j = space_c = 0;
+		while (lines[i][j] != '\0')
 		{
-			if (c == NEWLINE)
+		    // Count spaces till count == TAB_SIZE
+			if (lines[i][j] == ' ')
+				++space_c;				// Increment Counter
+			if (lines[i][j] != ' ')
+				space_c = 0;			// Reset Counter
+			if (space_c == TAB_SIZE)
 			{
-				lines[line_id][line_len] = '\0';
-				tabs_per_line[line_id] = tab_c;
-				blanks_per_line[line_id] = space_c;
-				chars_per_line[line_id] = line_len;
-				++line_id;
-				line_len = tab_c = space_c = 0;
-				continue;
+				/* Count back (TAB_SIZE - 1) spaces */
+				j -= (TAB_SIZE - 1);
+				lines_len[i] -= (TAB_SIZE - 1);
+				lines[i][j] = '\t';		// Replace with TAB
 			}
-			if (c == TAB)
-				++tab_c;
-			lines[line_id][line_len] = c;
-			++line_len;
+			++j;
 		}
 	}
 
-	// Print pre-entab lengths
-	printf("Pre-entab:\n");
-	for (i = 0; i < line_id; ++i)
-		printf("Length = %d\n", chars_per_line[i]);
-
-	// Convert TABs to BLANKS
-	line_len = space_c = char_c = space2tab = 0;
-	for (i = 0; i < line_id; ++i)
+	// Count Test Stats
+	for (i = 0; i < sub_line; i++)
 	{
-		for (c = 0; c < chars_per_line[i]; ++c)
+		j = space_c = tab_c = 0;
+		while (lines[i][j] != '\0')
 		{
-			if (lines[i][c] == NEWLINE)
-			{
-				lines[i][char_c] = '\0';
-				chars_per_line[i] = char_c;
-				continue;
-			}
-			
-			if (lines[i][c] == BLANK)
-			{
-				++space2tab;
+			if (lines[i][j] == ' ')
 				++space_c;
-			}
-			else space2tab = 0;
-			
-			if (space2tab == TAB_SIZE)
-			{
-				c -= TAB_SIZE - 1;
-				char_c -= TAB_SIZE - 1;
-				lines[i][char_c] = TAB;
-
-				// Move chars to the right into the places removed
-				for (j = i + 1; j < chars_per_line[i]; ++j)
-					lines[i][char_c + j] = lines[i][char_c + j + 1];
-				space2tab = 0;
-				lines[i][char_c] = '\0';
-			}
-			++char_c;
+			if (lines[i][j] == '\t')
+				++tab_c;
+			++j;
 		}
 	}
 
-	printf("-----------------\nOutput from entab:\n");
-
-	// Print each 'line' w/ stats
-	space_c = i = 0;
-	for (i = 0; i < line_id; ++i)
+	// Print lines
+	printf("=========================\n");
+	for (i = 0; i < sub_line; i++)
 	{
-		line_len = 0;
-
 		printf("%s$\t", lines[i]);
-		printf("\\t = %d;\t", tabs_per_line[i]);
-		printf("' ' = %d;\t", blanks_per_line[i]);
-		printf("Length = %d;\n", chars_per_line[i]);
-	}
+		printf("Spaces: %d\t", space_c);
+		printf("Tabs: %d\t", tab_c);
+		printf("Line Length: %d\n", lines_len[i]);
+	}	
 
-	return 0;
+	return (0);
 }
+

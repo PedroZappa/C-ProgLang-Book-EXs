@@ -18,7 +18,6 @@ int	main(void)
 	int lines_spaces[MAX];			/* Line's Spaces */
 	int lines_tabs[MAX];			/* Line's Tabs */
 
-
 	// Get lines from standard input
 	printf("To entab:\n");
 	printf("123456789x123456789x123456789x\n");
@@ -56,15 +55,16 @@ int	main(void)
 				lines_len[i] -= (TAB_SIZE - 1);
 				lines[i][j] = '\t';		// Replace with TAB
 				space_c = 0;
-
+				
+				// Remove trailing spaces
 				for (j = (i + 1); j < lines_len[i]; j++)
 				{
 				    lines[i][j] = lines[i][j + (TAB_SIZE - 1)];
 				}
 				space_c = 0;
-				lines[i][lines_len[i]] = '\0';
-			}
-			j++;
+				lines[i][lines_len[i]] = '\0';	// Null-terminate
+			}Get
+			j++;Get
 		}
 	}
 
@@ -80,7 +80,7 @@ int	main(void)
 				++space_c;
 			if (lines[i][j] == '\t')
 				++tab_c;
-			if (lines[i][j] > ' ' && lines[i][j] < '~')
+			if (lines[i][j] > ' ' && lines[i][j] <= '~')
 				++char_c;
 			++j;
 		}

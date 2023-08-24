@@ -15,11 +15,10 @@ void ft_fold(char line[], int idx);
 
 int main(void)
 {
-	int i;					/* Iterators */
 	int len;				/* Length of line */
 	char line[MAXLINE];		/* Input Line */
 
-	printf("To fold every %d chars:\n", BREAK);
+	printf("Fold input every %d chars:\n", BREAK);
 
 	/* Get input lines */
 	while ((len = ft_getline(line, MAXLINE)) > 0) 
@@ -27,55 +26,55 @@ int main(void)
 		if (len > BREAK)
 		{
 			ft_fold(line, 0);
-			printf("%s\n=======", line);
-		}
-		else
+			printf("====================\n");
 			printf("%s", line);
+			printf("123456789x123456789x\n");
+			printf("====================\n");
+		}
+		else printf("%s", line);
 	}
 
 	return 0;
 }
 
 /* get line */
-int ft_getline(char s[], int lim)
+int ft_getline(char line[], int lim)
 {
-	int c, i;
+	int c, i;			/* i = index, c = char */
 
-	for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i)
-		s[i] = c;
+	for (i = 0; i < (lim - 1) && ((c = getchar()) != EOF) && (c != '\n'); ++i)
+		line[i] = c;		/* add char to 'line' */
 	if (c == '\n')
-		s[i++] = c;		/* add '\n' & go to next 'i' */
-	s[i] = '\0';		/* null-terminate */
+		line[i++] = c;		/* add '\n' & go to next 'i' */
+	line[i] = '\0';			/* null-terminate */
 	return i;
 }
 
-/* fold lines */
-void ft_fold(char line[], int idx)
+/* fold lines: recursive */
+void ft_fold(char line[], int l_idx)
 {
-	int i, j;
-	int space_c;
+	int i;					/* i = index */	
 	
-	/* Loop through chars to find split point within BREAK number o'chars */
-	space_c = 0;
-	for (i = (idx + BREAK); (i > idx) && (line[i] != ' ') 
-		&& (line[i] != '\t'); --i)
+	/* Loop in reverse through 'line's first block of chars
+	 * of BREAK length to find split point */
+	for (i = (l_idx + BREAK); (i > l_idx) && (line[i] != ' ') && (line[i] != '\t'); --i)
 	{
-		// No split point found : split at SPACE after BREAK
-		if (i == idx)
+		// No split point found : split at ' ' or \t after BREAKs length
+		if (i == l_idx)
 		{
 			/* Look for next ' ' and '\t' */
-			for (i = idx; line[i] != ' ' && line[i] != '\t'; ++i);
+			for (i = l_idx; line[i] != ' ' && line[i] != '\t'; ++i);
 			line[i] = '\n';						/* Insert '\n' */
 		}
-
-		/* Split point found within BREAK number o'chars */
+		/* Split point found within BREAKs length */
 		if ((strlen(line) - i) <= BREAK)
 			line[i] = '\n';						/* Insert '\n' */
-		else if ((i > idx) && (i != idx))
+		else if ((i > l_idx) && (i != l_idx))
 		{
-			line[i] = '\n';						/* Insert '\n' */
+		    line[i] = '\n';					/* Insert '\n' */
 			ft_fold(line, i);					/* Recursive call */
 		}
+
 		return ;
 	}
 }

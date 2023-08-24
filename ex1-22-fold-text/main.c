@@ -13,6 +13,7 @@
 int ft_getline(char line[], int lim);
 void ft_fold(char line[], int idx);
 
+
 int main(void)
 {
 	int len;				/* Length of line */
@@ -37,10 +38,11 @@ int main(void)
 	return 0;
 }
 
+
 /* get line */
 int ft_getline(char line[], int lim)
 {
-	int c, i;			/* i = index, c = char */
+	int c, i;				/* i = index, c = char */
 
 	for (i = 0; i < (lim - 1) && ((c = getchar()) != EOF) && (c != '\n'); ++i)
 		line[i] = c;		/* add char to 'line' */
@@ -49,6 +51,7 @@ int ft_getline(char line[], int lim)
 	line[i] = '\0';			/* null-terminate */
 	return i;
 }
+
 
 /* fold lines: recursive */
 void ft_fold(char line[], int l_idx)
@@ -70,7 +73,7 @@ void ft_fold(char line[], int l_idx)
 		line[i] = '\n';						/* Insert '\n' */
 	else if ((i > l_idx) && (i != l_idx))
 	{
-	    line[i] = '\n';					/* Insert '\n' */
+	    line[i] = '\n';						/* Insert '\n' */
 		ft_fold(line, i);					/* Recursive call */
 	}
 

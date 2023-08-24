@@ -4,42 +4,78 @@
  * Do something intelligent with very long lines, and if 
  * there are no blanks or tabs before the specified column. */
 #include <stdio.h>
+#include <string.h>
 
 #define MAXLINE		256
-#define BREAK		12
+#define TAB_SIZE	8
+#define BREAK		6
+
+int ft_getline(char line[], int lim);
+void ft_fold(char line[], int idx);
 
 int main(void)
 {
-	int c, i;						/* Iterators */
-	int sub_line, len;				/* Line Counters */
-	int break_c;					/* Break Counters */
-	char lines[MAXLINE][MAXLINE];	/* Store folded lines */
+	int i;					/* Iterators */
+	int len;				/* Length of line */
+	char line[MAXLINE];		/* Input Line */
 
-	// Get lines from standard input
-	printf("To fold:\n");
+	printf("To fold every %d chars:\n", BREAK);
 
-	c = sub_line = len = 0;
-	while ((c = getchar()) != EOF)
+	/* Get input lines */
+	while ((len = ft_getline(line, MAXLINE)) > 0) 
 	{
-		lines[sub_line][len] = c;		// Store char
-		++len;
-		if (c >= ' ' && c <= '~') 
-			++break_c;
-		if (c == ' ')
-			break_c = 0;
-		if ((len % BREAK) == 0 || c == '\n')
-		{	
-			lines[sub_line][len] = '\0';// Null-terminate
-			++sub_line;
-			len = break_c = 0;
+		if (len > BREAK)
+		{
+			ft_fold(line, 0);
+			printf("%s\n=======", line);
 		}
+		else
+			printf("%s", line);
 	}
-	lines[sub_line][len + 1] = '\0';
 
-	// Print folded lines
-	printf("Fold = %d\n", BREAK);
-	printf("123456789x123456789x\n");
-	for (i = 0; i < sub_line; i++)
-		printf("%s$\n", lines[i]);
+	return 0;
+}
 
+/* get line */
+int ft_getline(char s[], int lim)
+{
+	int c, i;
+
+	for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i)
+		s[i] = c;
+	if (c == '\n')
+		s[i++] = c;		/* add '\n' & go to next 'i' */
+	s[i] = '\0';		/* null-terminate */
+	return i;
+}
+
+/* fold lines */
+void ft_fold(char line[], int idx)
+{
+	int i, j;
+	int space_c;
+	
+	/* Loop through chars to find split point within BREAK number o'chars */
+	space_c = 0;
+	for (i = (idx + BREAK); (i > idx) && (line[i] != ' ') 
+		&& (line[i] != '\t'); --i)
+	{
+		// No split point found : split at SPACE after BREAK
+		if (i == idx)
+		{
+			/* Look for next ' ' and '\t' */
+			for (i = idx; line[i] != ' ' && line[i] != '\t'; ++i);
+			line[i] = '\n';						/* Insert '\n' */
+		}
+
+		/* Split point found within BREAK number o'chars */
+		if ((strlen(line) - i) <= BREAK)
+			line[i] = '\n';						/* Insert '\n' */
+		else if ((i > idx) && (i != idx))
+		{
+			line[i] = '\n';						/* Insert '\n' */
+			ft_fold(line, i);					/* Recursive call */
+		}
+		return ;
+	}
 }

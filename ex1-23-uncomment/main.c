@@ -9,6 +9,7 @@
 #define COMMENT	2
 #define STAR	3
 
+
 int main(void)
 {
     int state;
@@ -19,17 +20,17 @@ int main(void)
 	state = SEARCH;
 	while((c = getchar()) != EOF)
 	{
-			if (state == SLASH)
-		    {
-				if (c == '*')
-					state = COMMENT;// '/*' comment found
-				else				// do not print 
-				{
-					putchar('/');	// '*/' comment finished
-					state = SEARCH;	// switch back to search mode
-				}
+		if (state == SLASH)
+	    {
+			if (c == '*')
+				state = COMMENT;// comment found
+			else				// do not print 
+			{
+				putchar('/');	// comment finished
+				state = SEARCH;	// switch back to search mode
 			}
-		// Look for comments '/* */'
+		}
+		// Look for comments 
 		if (state == SEARCH || state == SLASH)
 		{
 			// Look for comment oepning '/' 
@@ -59,3 +60,5 @@ int main(void)
 
 	return 0;
 }
+
+

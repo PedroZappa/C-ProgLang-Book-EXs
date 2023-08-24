@@ -6,9 +6,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MAXLINE		256
+#define MAXLINE		512
 #define TAB_SIZE	8
-#define BREAK		6
+#define BREAK		12
 
 int ft_getline(char line[], int lim);
 void ft_fold(char line[], int idx);
@@ -57,24 +57,22 @@ void ft_fold(char line[], int l_idx)
 	
 	/* Loop in reverse through 'line's first block of chars
 	 * of BREAK length to find split point */
-	for (i = (l_idx + BREAK); (i > l_idx) && (line[i] != ' ') && (line[i] != '\t'); --i)
+	for (i = (l_idx + BREAK); (i > l_idx) && (line[i] != ' ') && (line[i] != '\t'); --i);
+	// No split point found : split at ' ' or \t after BREAKs length
+	if (i == l_idx)
 	{
-		// No split point found : split at ' ' or \t after BREAKs length
-		if (i == l_idx)
-		{
-			/* Look for next ' ' and '\t' */
-			for (i = l_idx; line[i] != ' ' && line[i] != '\t'; ++i);
-			line[i] = '\n';						/* Insert '\n' */
-		}
-		/* Split point found within BREAKs length */
-		if ((strlen(line) - i) <= BREAK)
-			line[i] = '\n';						/* Insert '\n' */
-		else if ((i > l_idx) && (i != l_idx))
-		{
-		    line[i] = '\n';					/* Insert '\n' */
-			ft_fold(line, i);					/* Recursive call */
-		}
-
-		return ;
+		/* Look for next ' ' and '\t' */
+		for (i = l_idx; line[i] != ' ' && line[i] != '\t'; ++i);
+		line[i] = '\n';						/* Insert '\n' */
 	}
+	/* Split point found within BREAKs length */
+	if ((strlen(line) - i) <= BREAK)
+		line[i] = '\n';						/* Insert '\n' */
+	else if ((i > l_idx) && (i != l_idx))
+	{
+	    line[i] = '\n';					/* Insert '\n' */
+		ft_fold(line, i);					/* Recursive call */
+	}
+
+	return ;
 }

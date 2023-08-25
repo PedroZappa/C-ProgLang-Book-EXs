@@ -16,31 +16,33 @@ int main(void)
 {
 	printf("To deTAB:\n");
 	
-	char lines[MAX_NUM][MAX_LEN];
-	int c, i, offset, lineId, line_len, tabSize;
+	int c, i;
+	int offset, lineId, line_len;
 	int space_c;
+	char lines[MAX_NUM][MAX_LEN];
 
-	lineId = line_len = 0, tabSize = 8;
+	// Get lines
+	lineId = line_len = 0;
 	while ((line_len < MAX_LEN - 1) && (c = getchar()) != EOF)
 	{
 		if (c == '\n')
 		{
-			lines[lineId][line_len] = '\0';
-			lineId++;
+			lines[lineId][line_len] = '\0';			// Null-terminate
+			lineId++;								// Get next line
 			line_len = 0;
 		}
 		else if (c == '\t') 
 		{
-		    offset = TAB - (line_len % TAB);
+		    offset = TAB - (line_len % TAB);		// Get offset
 		    while(offset-- != 0) 
 		    {
-				lines[lineId][line_len] = SPACE;
+				lines[lineId][line_len] = SPACE;	// Replace tab with space
 				++line_len;
 			}
 		}
 		else
 		{
-			lines[lineId][line_len] = c;
+			lines[lineId][line_len] = c;			// Store char
 			++line_len;
 		}
 	}
@@ -57,7 +59,7 @@ int main(void)
 		while (lines[i][line_len] != '\0')
 		{
 			if (lines[i][line_len] == SPACE)
-				++space_c;
+				++space_c;					// Increment space Counter
 			++line_len;
 		}
 		printf("%s$\t", lines[i]);

@@ -36,15 +36,12 @@ int	main(void)
 			sub_line++;					// Get next line
 			len = 0;
 		}
-		else
-			++len;
+		else ++len;
 	}
 
 	// Entab lines
 	for (i = 0; i < sub_line; ++i)
-	{
 		entab(lines[i], lines_len[i]);
-	}
 
 	// Get Stats & Print lines
 	printf("=========================\n");
@@ -79,21 +76,22 @@ int	main(void)
 
 int entab(char line[], int len)
 {
-	int i, j, k;			// Iterators 
+	int i, j;			// Iterators 
 	int t;					// Toggle
 	int space_c;			// Space Counters 
 
-		space_c = 0;
+	// Entab lines
+	i = space_c = 0;
+	while(line[i])
+	{
 		if (line[i] == ' ')
 			space_c++;				// Increment space Counter
 		if (line[i] != ' ')
 			space_c = 0;			// Reset space Counter
 		if (space_c == TAB_SIZE)
 		{
-			
 			i -= (TAB_SIZE - 1);	// Count back to the first blank
 			line[i] = '\t';			// Replace first blank with TAB
-
 			for (j = (i + 1); j < len; j++)
 				line[j] = line[j + (TAB_SIZE - 1)];		// Remove trailing spaces
 			len -= (TAB_SIZE - 1);						// Update line length
@@ -101,7 +99,7 @@ int entab(char line[], int len)
 			space_c = 0;								// Reset space counter
 		}
 		++i;
-	
+	}
 
 	return (i);
 }

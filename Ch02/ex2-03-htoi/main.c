@@ -22,7 +22,9 @@ int main(void)
 		"abcdef",
 		"123456",
 		"0x123456",
-		"zedro"
+		"zedro",
+		"230x234",
+		"230"
 	};
 
 	long int result;

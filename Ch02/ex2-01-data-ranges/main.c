@@ -13,7 +13,7 @@ int main(void)
 	uchar_min = uchar_max = 0;
 	--uchar_max;	//cause max3 to underflow to get 'unsigned char' max
 	printf("'unsigned char' range:\t\t%hu - %hu\n", uchar_min, uchar_max);
-	printf("from <limits.h>:\t\t%hu - %hu\n\n", 0, UCHAR_MAX);
+	printf("from <limits.h>:\t\t%d - %d\n\n", 0, UCHAR_MAX);
 
 	/* char */
 	char char_min, char_max;
@@ -38,14 +38,14 @@ int main(void)
 	ushort_min = ushort_max = 0;
 	--ushort_max;	//cause underflow to get 'unsigned short' max
 	printf("'unsigned short' range:\t\t%hu - %hu\n", ushort_min, ushort_max);
-	printf("from <limits.h>:\t\t%hu - %hu\n\n", 0, USHRT_MAX);
+	printf("from <limits.h>:\t\t%d - %d\n\n", 0, USHRT_MAX);
 
 	/* unsigned short int */
 	unsigned short int ushort_int_min, ushort_int_max;
 	ushort_int_min = ushort_int_max = 0;
 	--ushort_int_max;	//cause underflow to get 'unsigned short int' max
 	printf("'unsigned short int' range:\t%hu - %hu\n", ushort_int_min, ushort_int_max);
-	printf("from <limits.h>:\t\t%hu - %hu\n\n", 0, USHRT_MAX);
+	printf("from <limits.h>:\t\t%d - %d\n\n", 0, USHRT_MAX);
 
 	/* short */
 	short short_min, short_max;

@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-long htoi(char *hexstr);					// converts a string of hex bits into integer.
+long htoi(char hexstr[]);					// converts a string of hex bits into integer.
 long hexchartoi(char hexdigit, int pos);	// converts a hex char to its integer value.
 
 int main(void)
@@ -15,17 +15,14 @@ int main(void)
 	char *endptr = NULL;
 	char *tests[] =
 	{
-		"F00",
-		"bar",
-	    "0100",
-	    "0x1",
-		"0XA",
+	    "2A",
+	    "0x2A",
+		"0X2A",
 		"0X0C0BE",
 		"abcdef",
 		"123456",
 		"0x123456",
-		"zedro",
-		"zog_c"
+		"zedro"
 	};
 
 	long int result;
@@ -38,10 +35,10 @@ int main(void)
 		result = htoi(tests[curr_test]);				// call htoi for convertion.
 		check = strtol(tests[curr_test], &endptr, 16);	// compare with library function.
 
-		if ((*endptr != '\0' && result == -1) || result == check)
-			printf("Testing:\t'%s'.\tValid Conversion! %ld\n", tests[curr_test], result);
+		if ((*endptr != '\0' && result != -1) || result == check)
+			printf("Testing: '%s'.\tValid Conversion!\t%ld : %ld\n", tests[curr_test], result, check);
 		else
-			printf("Testing:\t'%s'.\tInvalid Conversion! %ld\n", tests[curr_test], result);
+			printf("Testing: '%s'.\tInvalid Conversion!\t%ld : %ld\n", tests[curr_test], result, check);
 	}
 
 	return 0;
@@ -54,13 +51,17 @@ long htoi(char *hexstr)
 	long decimal, digit;
 	int pos;
 
+	// Skip '0x' or '0X'
+	if (hexstr[0] == '0' && (hexstr[1] == 'x' || hexstr[1] == 'X'))
+		hexstr += 2;
+
 	decimal = digit = pos = 0;
 	while (ptr >= hexstr)
 	{
 		if ((digit = hexchartoi(*ptr, pos)) < 0)	// invalid hex digit.
 		{
-			printf("Invalid hex digit: %c at position %d\n", *ptr, pos);
-			return -1;
+			printf("Invalid hex digit: '%c' at position %d\n", *ptr, pos);
+			return (-1);
 		}
 		decimal += digit;
 		--ptr;
@@ -80,13 +81,13 @@ long hexchartoi(char hexdigit, int pos)
 	decimal = 0;
 	while (*ptr != toupper(hexdigit) && decimal < 16)
 	{
-		++ptr;
-		++pos;
+		++ptr;								// go to next char in hextable.
+		++decimal;							// increment decimal
 	}
 	if (*ptr == toupper(hexdigit))
 	{
 		for (i = 0; i < pos; i++)
-			decimal += 16;
+			decimal *= 16;
 		return decimal;
 	}
 	return -1;

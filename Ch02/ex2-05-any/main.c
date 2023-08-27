@@ -6,77 +6,27 @@
  
 int any(char s1[], char s2[]);
  
-int main(void)
+int main(int argc, char *argv[])
 {
-	char *s1[] = 
-	{
-		"",
-		"Z",
-		"zedro",
-		"Zedr0",
-	};
-	char *s2[] = 
-	{
-		"",
-		"Z",
-		"zedro",
-		"Zedr0",
-	};
-	char *check = NULL;
-	size_t n_s1 = sizeof(s1) / sizeof(s1[0]);
-	size_t n_s2 = sizeof(s2) / sizeof(s2[0]);
-	size_t l , r;
-	int passed, failed;
-	int pos;
+    char *s1 = NULL;
+    char *s2 = NULL;
 
-	pos = -1;
-	passed = failed = 0;
-	for (l = 0; l < n_s1; l++)
+	if (argc < 3 || argc > 3)
 	{
-		for (r = 0; r < n_s2; r++)
-		{
-			pos = any(s1[l], s2[r]);
-			check = strpbrk(s1[l], s2[r]);
-			
-			if (pos == -1)
-			{
-				if (check != NULL)
-				{
-					printf("Test %ld/%ld FAILED!\n", l, r);
-					failed++;
-				} 
-				else
-				{
-					printf("Test %ld/%ld PASSED!\t", l, r);
-					printf("Match at position %d\n", pos);
-					passed++;
-				}
-			}
-			else
-			{
-				if (check == NULL)
-				{
-					printf("Test %ld/%ld FAILED!\n", l, r);
-					failed++;
-				}
-				else
-				{
-					if ((check - s1[l]) == pos)
-					{
-						printf("Test %ld/%ld PASSED!\n", l, r);
-						passed++;
-					}
-					else
-					{
-						printf("Test %ld/%ld FAILED!\n", l, r);
-						failed++;
-					}
-				}
-			}
-		}
+		printf("Usage: %s <string1> <string2>\n", argv[0]);
+		return(1);
 	}
-	printf("\nTEST RESULTS:\n");
-	printf("Passed: %d,\nFailed: %d\n", passed, failed);
+	else
+	{
+		s1 = argv[argc - 2];
+		s2 = argv[argc - 1];
+	}
+    
+	printf("'%s' includes '%s'?\n", s1, s2);
+	if (any(s1, s2) != -1)
+		printf("Match found at index '%d'\n", any(s1, s2));
+	else
+		printf("No match found\n");
 
 	return 0;	
 }
@@ -84,7 +34,7 @@ int main(void)
 // any()
 int any(char s1[], char s2[])
 {
-	char arr[ASCII_SIZE];
+	char arr[ASCII_SIZE] = {0};
 	int i;
 
 	if (s1 == NULL)			// Check for NULL strings

@@ -19,7 +19,7 @@ int main (int argc, char *argv[])
 		x = x_og = atoi(argv[1]);
 	
 	// Render UI
-	printf("\t\tbitcount( x ) =\n");
+	printf("\t\tbitcount( x )\n");
 	printf("\tx = %u = ", x);
 	print_binary(x, BYTES);
 	printf("==================================================\n");
@@ -32,15 +32,17 @@ int main (int argc, char *argv[])
 	{
 		// Set x to new value
 		x &= (x - 1);	// clear rightmost 1-bit
-		printf("bitcount( %2d ) = has (%2x ) = ", x, n_1bits);
+		printf("bitcount( %2d ) = %3d = ", x_og, x);
 		print_binary(x, BYTES);
 	}
 	printf("==================================================\n");
-	printf("\tx = %d; has (%d) 1-bits.\n", x_og, n_1bits);
+	printf("\tx = %d = ", x_og);
+	print_binary(x_og, BYTES);
+	printf("\t\thas (%d) 1-bits.\n", n_1bits);
 
 
 	return (0);
-}
+	}
 
 int bitcount_og(unsigned x)
 {

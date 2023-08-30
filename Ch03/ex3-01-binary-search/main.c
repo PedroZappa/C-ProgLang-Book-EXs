@@ -79,7 +79,7 @@ int binsearch_og(int x, int v[], int n)
 			high = mid - 1;			// Search in lower half
 		else if (x > v[mid])
 			low = mid + 1;			// Search in upper half
-		else				
+		else
 			return (mid);			// Match found
 	}
 	return (-1);					// No match found

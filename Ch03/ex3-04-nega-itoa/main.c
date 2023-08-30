@@ -70,10 +70,10 @@ void itoa(int n, char s[])
 }
 
 // nega_itoa: 
-// Same as the above, but inverted the comparison operators in the 
-// expressions for sign checking and stopping the do-while loop,
-// the conversion formula, we convert positive to negative instead,
-// so we can handle INT_MIN.
+// Same as the above, but where recording the sign, we check for a 
+// positive number instead, if so invert 'n's sign. On the do-while loop, 
+// we invert the relational operator. For the conversion formula, 
+// we convert positive to negative instead, so we can handle INT_MIN.
 void nega_itoa(int n, char s[])
 {
 	int i, sign;

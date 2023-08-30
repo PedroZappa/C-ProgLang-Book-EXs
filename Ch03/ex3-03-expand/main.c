@@ -5,7 +5,6 @@
 // a leading or trailing - is taken literally.
 #include <ctype.h>
 #include <stdio.h>
-#include <string.h>
 
 #define UPPER(N) ((N) >= 'A' && (N) <= 'Z')		// Uppercase check
 #define LOWER(N) ((N) >= 'a' && (N) <= 'z')		// Lowercase check
@@ -77,9 +76,9 @@ void expand(char *s1, char *s2)
 					// Check for Numbers
 					(NUMBER(s1[i-1]) && NUMBER(s1[i+1]) && (s1[i-1] < s1[i+1]))))
 		{
-			buffer = s1[i-1]+1;			// Put previous char in buffer
-			while (buffer < s1[i+1])
-				s2[j++] = buffer++;
+			buffer = s1[i-1]+1;			// save next ASCII in buffer
+			while (buffer < s1[i+1])	// while chars till last ASCII
+				s2[j++] = buffer++;		// Copy char, go to next ASCII
 			continue;
 		}
 		s2[j++] = s1[i];		// Copy char

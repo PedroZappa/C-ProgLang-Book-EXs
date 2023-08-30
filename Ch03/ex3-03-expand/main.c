@@ -54,7 +54,7 @@ void expand(char *s1, char *s2)
 	int buffer;	// Temporary buffer
 
 	j = 0;
-	for (i = 0; s1[i] != '\0'; i++)		// Loop through s1
+	for (i = 0; s1[i]; i++)		// Loop through s1
 	{
 		if (i == 0 || s1[i] != DASH)	// If anthing but dash or first char
 		{

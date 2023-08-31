@@ -13,7 +13,7 @@
 #define MAX_BASE		36
 
 #define WHITESPACE(N)	((N) == ' ' || (N) == '\t' || (N) == '\n')
-#define IS_SIGN(N)		((N) >= '-' || (N) <= '+')
+#define IS_SIGN(N)		((N) == '-' || (N) == '+')
 
 void	itob(int n, char s[], int b);
 void	reverse(char str[]);

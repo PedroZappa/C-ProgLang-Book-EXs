@@ -6,6 +6,8 @@
 #include <limits.h>
 
 #define SEP				"===============================\n"
+#define V_SEP			"\t=\t"
+#define TAB				"\t"
 #define MAX_LEN			256
 #define MIN_BASE		2
 #define MAX_BASE		36
@@ -24,23 +26,24 @@ int	main(int argc, char **argv)
 	int		base;				// Base
 	int		n;					// User input integer
 	int		i;					// Iterator
-									
+	int		mid_base;			// Mid base		
+
 	// Get user input
 	n = 42;
 	if (argc > 1)
 		n = ft_atoi(argv[1]);
 	
 	// Render UI
-	printf("\titob( n, s, b )\n");
+	printf("itob( n, s, b )\n");
 	printf(SEP);
-	printf("n = %d\n", n);
+	printf(TAB "n = %d\n", n);
 	printf(SEP);
 
 	// Convert 'n' into strings in all possible bases 'b'
 	for (base = MIN_BASE; base <= MAX_BASE; base++)
 	{
 		itob(n, str, base);
-		printf("Base [%d] = %s\n", base, str);
+		printf("Base %2d: = %s\n", base, str);
 	}
 	printf(SEP);
 

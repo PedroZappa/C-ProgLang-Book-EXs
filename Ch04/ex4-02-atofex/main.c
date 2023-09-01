@@ -13,21 +13,15 @@ double atofex(char *s);
 int main(int argc, char *argv[])
 {
 	char *s = "123.45e-6";
-	char *strs[] = { "123.45", "-123.456E2", "123e-6", "123e+2", NULL};
+	char *strs[] = { "-123.45e-1", "123.456E2", "123e-6", "123e+2", NULL};
 	double val;			// converted value of 's'
 	int i;
 
 	// Get user input
 	if (argc > 1)
-		s = argv[argc - 1];
+		strs[0] = argv[argc - 1];
 
 	printf("atofex(char *s)\n");
-	printf(SEP);
-
-	printf("Input:  %s\n", s);
-
-	val = atofex(s);
-	printf("Output: %3.3f\n", val);
 	printf(SEP);
 
 	for (int i = 0; strs[i]; i++)

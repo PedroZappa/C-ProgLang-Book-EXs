@@ -1,12 +1,12 @@
 /* Exercise 4-3. Given the basic framework, it’s straightforward 
  * to extend this reverse Polish calculator. Add the modulus (%) 
  * operator and provisions for negative numbers. */
-#include <math.h>
+#include <math.h>		/* fmod() */
 #include <stdio.h>
 #include <stdlib.h>		/* atof() */
 
 #define	SEP			"======================================\n"
-#define MAXOP		100		/* max size of operand or operator */
+#define MAXOP		1000	/* max size of operand or operator */
 #define MAXVAL		100		/* maximum depth of val stack */
 #define BUFSIZE		100		/* size of buffer */
 #define NUMBER		'0'		/* signal that a number was found */
@@ -36,7 +36,7 @@ int main()
 
 	/* Render Calculator's Header */
 	printf(SEP "\tReverse Polish Calculator\n" SEP);
-	printf("Available Operations: + - * / \%%\n" SEP);
+	printf("Available Operatiors: + - * / \%%\n" SEP);
 	printf("Usage: <operand> <operand> <operator>\n" SEP);
 
 	while ((type = getop(s)) != EOF)
@@ -68,13 +68,13 @@ int main()
 				if (op2 != 0.0)
 					push(fmod(pop(), op2));
 				else
-					printf("error: zero divisor\n");
+					printf("error: zero divisor\n" SEP);
 				break;
 			case '\n':
 				printf("= %.8g\n", pop());
 				break;
 			default:
-				printf("error: unknown command %s\n", s);
+				printf("error: unknown command '%s'\n" SEP, s);
 				break;
 		}
 	}
@@ -96,24 +96,30 @@ int getop(char s[])
 		return c;			/* not a number */
 
 	i = 0;
+	if (c == '-')			/* handle negative number */
+	{
+		s[i++] = '-';
+		c = getch();
+	}
 	if (IS_DIGIT(c))		/* collect integer part */
 	{
-		while (i < MAXOP-1 && IS_DIGIT(s[++i] = c = getch()));
-			;
-		if (i >= MAXOP-1)
+		while (IS_DIGIT(c))
 		{
-			printf("error: too many digits\n");
-			while (c != EOF && IS_SPACE(c));
-				c = getch();
-			return EOF;
+			s[i++] = c;
+			c = getch();
 		}
-		s[i] = '\0';
-		if (c != EOF)
-			ungetch(c);
 	}
 	if (c == '.')			/* collect fractional part */
-		while (IS_DIGIT(s[++i] = c = getch()));
-			;
+	{
+		s[i++] = c;
+		c = getch();
+		while (IS_DIGIT(c))
+		{
+			s[i++] = c;
+			c = getch();
+		}
+		
+	}
 	s[i] = '\0';
 	if (c != EOF)
 		ungetch(c);

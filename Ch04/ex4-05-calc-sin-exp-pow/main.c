@@ -222,21 +222,21 @@ void ungetch(int c)
  * valid IDs: sin, cos, exp, pow */
 void check_id(char *str)
 {
-	if (0 ==strcmp(str, "sin")) 		/* Validate sin() */
+	if (0 == strcmp(str, "sin")) 		/* Validate sin() */
 	{
 		if (stack_pos < 1)
 			printf("error: stack underflow, can't call sin\n");
 		else
 			push(sin(pop()));
 	}
-	else if (0 ==strcmp(str, "cos"))	/* Validate cos() */
+	else if (0 == strcmp(str, "cos"))	/* Validate cos() */
 	{
 		if (stack_pos < 1)
 			printf("error: stack underflow, can't call cos\n");
 		else
 			push(cos(pop()));
 	}
-	else if (0 ==strcmp(str, "exp"))	/* Validate exp() */
+	else if (0 == strcmp(str, "exp"))	/* Validate exp() */
 	{
 		if (stack_pos < 1)
 			printf("error: stack underflow, can't call exp\n");

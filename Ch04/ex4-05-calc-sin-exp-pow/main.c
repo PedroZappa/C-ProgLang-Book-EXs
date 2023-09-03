@@ -52,7 +52,8 @@ int main()
 
 	/* Render Calculator's Header */
 	printf(SEP "\tReverse Polish Calculator\n" SEP);
-	printf("Math Ops\t + - * / \%%\n");
+	printf("Basic Ops\t + - * / \%%\n");
+    printf("Advanced Ops\t sin cos exp pow\n");
 	printf("Special Ops\t ? # ~ ! \n" SEP);
 	printf("Usage: <operand> <operand> <operator>\n" SEP);
 

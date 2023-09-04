@@ -52,8 +52,7 @@ int main()
 
 	/* Render Calculator's Header */
 	printf(SEP "\tReverse Polish Calculator\n" SEP);
-	printf("Basic Ops\t + - * / \%%\n");
-    printf("Advanced Ops\t sin cos exp pow\n");
+	printf("Math Ops\t + - * / \%%\n");
 	printf("Special Ops\t ? # ~ ! \n" SEP);
 	printf("Usage: <operand> <operand> <operator>\n" SEP);
 
@@ -223,21 +222,21 @@ void ungetch(int c)
  * valid IDs: sin, cos, exp, pow */
 void check_id(char *str)
 {
-	if (0 == strcmp(str, "sin")) 		/* Validate sin() */
+	if (0 ==strcmp(str, "sin")) 		/* Validate sin() */
 	{
 		if (stack_pos < 1)
 			printf("error: stack underflow, can't call sin\n");
 		else
 			push(sin(pop()));
 	}
-	else if (0 == strcmp(str, "cos"))	/* Validate cos() */
+	else if (0 ==strcmp(str, "cos"))	/* Validate cos() */
 	{
 		if (stack_pos < 1)
 			printf("error: stack underflow, can't call cos\n");
 		else
 			push(cos(pop()));
 	}
-	else if (0 == strcmp(str, "exp"))	/* Validate exp() */
+	else if (0 ==strcmp(str, "exp"))	/* Validate exp() */
 	{
 		if (stack_pos < 1)
 			printf("error: stack underflow, can't call exp\n");

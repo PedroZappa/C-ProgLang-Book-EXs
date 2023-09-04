@@ -50,7 +50,8 @@ char buf[BUFSIZE];	    		/* buffer for ungetch */
 int buf_pos = 0;    			/* buffer position */
 double op2;				    	/* second operand (for '-', '/' & 'pow()') */
 int noPopPrint = 0;	    		/* Don't pop & print on ENTER after stack ops */
-struct variable var[MAX_VARS];
+
+struct variable var[MAX_VARS];  /* Array to store vars */
 struct variable last;
 int var_pos = 0;
 

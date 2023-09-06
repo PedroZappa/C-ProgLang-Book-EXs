@@ -297,10 +297,13 @@ void check_id(char *str, struct variable var[])
         check_var(str, var);
 }
 
-/* check_var */
+/* check_var : check if 'str' matches any of the variable.names
+ * If found updates global array of variable's value
+ * If no match is found add the variable to the array */
 void check_var(char *str, struct variable var[])
 {
-    int i;
+    int i;      /* String Iterator */
+
     for (i = 0; i < MAX_VARS-1 && var[i].name[0] != '\0'; i++)
     {
         if (!strcmp(str, var[i].name))

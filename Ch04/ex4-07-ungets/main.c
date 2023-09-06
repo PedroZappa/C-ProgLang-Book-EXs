@@ -34,7 +34,7 @@ void ungets(char *s)
 {
     size_t len = strlen(s);     /* get length of string */
 
-    if (BUFSIZE-buf_pos >= len)  /* enough space in buffer */
+    if (BUFSIZE-buf_pos >= len) /* enough space in buffer */
         while (len > 0)         /* push back characters, LIFO */
             ungetch(s[--len]);
 }

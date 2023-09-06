@@ -150,9 +150,9 @@ int main()
 /* getop: parse next operator, operand or identifier */
 int getop(char s[])
 {
-	int c;					/* current char */
-    int next_c;              /* next char */
-	int i = 0;				/* iterator */
+	int c;					    /* current char */
+    int next_c;                 /* next char */
+	int i = 0;				    /* iterator */
 
 	/* Skip whitespace */
 	while ((s[0] = c = getch()) == ' ' || c == '\t')

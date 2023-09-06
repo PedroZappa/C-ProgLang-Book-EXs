@@ -306,8 +306,9 @@ void check_var(char *str, struct variable var[])
 
     for (i = 0; i < MAX_VARS-1 && var[i].name[0] != '\0'; i++)
     {
+        /* Check if 'str' doesn' match any var[i].name */
         if (!strcmp(str, var[i].name))
-        {
+        { 
             strcpy(last.name, str);
             last.value = var[i].value;
             push(var[i].value);

@@ -346,7 +346,6 @@ void check_var(char *str, struct variable var[])
 /* stack_ops: handle stack operation commands */
 void stack_cmds(int cmd)
 {
-	int i;
 	noPopPrint = 1;
 	
 	switch (cmd)

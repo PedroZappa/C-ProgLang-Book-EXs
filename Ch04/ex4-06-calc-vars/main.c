@@ -5,8 +5,8 @@
 #include <stdlib.h>		/* atof() */
 
 /* Constants */
-#define	SEP		    	"======================================\n"
-#define	SEP2	    	"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+#define SEP		    	"======================================\n"
+#define SEP2	    	"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 #define MAXOP	    	1000	/* max size of operand or operator */
 #define MAXVAL	    	100		/* maximum depth of val stack */
 #define BUFSIZE	    	100		/* size of buffer */
@@ -44,15 +44,15 @@ void swap(void);		    	/* swap top two elements of stack */
 void clear(struct variable var[]);			/* clear stack */
 
 /* External Variables */
-int stack_pos = 0;		    	/* stack position */
+int stack_p = 0;		    	/* stack position */
 double val[MAXVAL];		    	/* value stack */
 char buf[BUFSIZE];	    		/* buffer for ungetch */
 int buf_pos = 0;    			/* buffer position */
 double op2;				    	/* second operand (for '-', '/' & 'pow()') */
 int noPopPrint = 0;	    		/* Don't pop & print on ENTER after stack ops */
 
-struct variable var[MAX_VARS];  /* Array to store vars */
-struct variable last;
+struct variable vars[MAX_VARS];  /* Array to store vars */
+struct variable input_var;      /* Variable being read */   
 int var_pos = 0;
 
 /* Reverse Polish Calculator */
@@ -69,7 +69,7 @@ int main()
 	printf("User Variables\n" SEP);
 	printf("Usage: <operand> <operand> <operator>\n" SEP);
 
-    clear(var);
+    clear(vars);                 /* clear the var array */
 
 	while ((type = getop(s)) != EOF)
 	{
@@ -83,7 +83,7 @@ int main()
 
 			/* String Handling for math.h functions */
 			case ID:
-				check_id(s, var);
+				check_id(s, vars);
 				break;
 
 			/* Special Commands */
@@ -93,17 +93,20 @@ int main()
 
 			/* Operators */
 			case '+':					/* add */
-				printf("Sum\t%.8f + %.8f\n", val[stack_pos-2], val[stack_pos-1]);
+				printf("Sum\t%.8f + %.8f\n", val[stack_p-2], val[stack_p-1]);
 				push(pop() + pop());
 				break;
 			case '*':					/* multiply */
+				printf("Multiply\t%.8f * %.8f\n", val[stack_p-2], val[stack_p-1]);
 				push(pop() * pop());
 				break;
 			case '-':					/* subtract */
+				printf("Subtract\t%.8f - %.8f\n", val[stack_p-2], val[stack_p-1]);
 				op2 = pop();
 				push(pop() - op2);
 				break;
 			case '/':					/* divide */
+				printf("Divide\t%.8f / %.8f\n", val[stack_p-2], val[stack_p-1]);
 				op2 = pop();
 				if (op2 != 0.0)
 					push(pop() / op2);
@@ -111,6 +114,7 @@ int main()
 					printf("error: zero divisor\n");
 				break;
 			case '%':					/* modulus */
+				printf("Modulus\t%.8f \%% %.8f\n", val[stack_p-2], val[stack_p-1]);
 				op2 = pop();
 				if (op2 != 0.0)
 					push(fmod(pop(), op2));
@@ -130,12 +134,12 @@ int main()
                 break;
             case '=':
                 pop();
-                var[var_pos].value = pop();
-                last.value = var[var_pos].value;
-                push(last.value);
+                vars[var_pos].value = pop();
+                input_var.value = vars[var_pos].value;
+                push(input_var.value);
                 break;
             case '<':
-                printf("Last variable: %s = %g\n", last.name, last.value);
+                printf("last variable: %s = %g\n", input_var.name, input_var.value);
                 break;
 
 			default:
@@ -159,63 +163,67 @@ int getop(char s[])
 		;
 	s[1] = '\0';
 
-	if (IS_ALPHA(c))			/* Check for a math.h identifier */
+    /* Handle alphabetical identifiers */
+	if (IS_ALPHA(c))			/* Check for a math.h or var identifier */
 	{
 		i = 0;
 		do 
 		{
-			s[i++] = c;
+			s[i++] = c;         /* collect identifier */
 			c = getch();
 		}
-		while (IS_ALPHA(c));	/* collect identifier */
+		while (IS_ALPHA(c));    /* while alphabetical */
 		s[i] = '\0';
 
-		if (c != EOF)
-			ungetch(c);
+		if (c != EOF)           /* If not end of file */
+			ungetch(c);         /* Put non-alphabetical char back */
 		return ID;
 	}
-    /* Not a number or '.' or '-' */
-	if (!IS_DIGIT(c) && c != '.' && c != '-')
+
+    /* Handle assignment operator '=' */
+	if (!IS_DIGIT(c) && c != '.')
     {
-        /* Handle variable assignment */
+        /* Check if next char is '=' AND next char is '\n' */
         if (c == '=' && (next_c = getch()) == '\n')    
         {
-            ungetch('\0');
-            return c;
+            ungetch('\0');  /* put '\0' back */
+            return c;       /* return '=' */
         }
-        if (c == '\0')
-            return EOS;
+        if (c == '\0')      /* If end of file */
+            return EOS;     /* return EOS signal */
 		return c;
     }
 
+    /* Handle number */
 	i = 0;
 	if (c == '-')			/* handle negative number */
 	{
 		s[i++] = '-';
 		c = getch();
 	}
-	if (IS_DIGIT(c))		/* collect integer part */
+	if (IS_DIGIT(c))		/* handle integer part */
 	{
 		while (IS_DIGIT(c))
 		{
-			s[i++] = c;
+			s[i++] = c;     /* collect integer part */
 			c = getch();
 		}
 	}
-	if (c == '.')			/* collect fractional part */
+	if (c == '.')			/* handle fractional part */
 	{
-		s[i++] = c;
+		s[i++] = c;         /* collect '.' */
 		c = getch();
 		while (IS_DIGIT(c))
 		{
-			s[i++] = c;
+			s[i++] = c;     /* collect fractional part */
 			c = getch();
 		}
-		
 	}
 	s[i] = '\0';
-	if (c != EOF)
-		ungetch(c);
+	
+    if (c != EOF)           /* If not end of file */
+		ungetch(c);         /* Put non-digit char back */
+
 	printf(SEP2);
 	return NUMBER;
 }
@@ -224,8 +232,8 @@ int getop(char s[])
 // push: push 'f' onto the value stack
 void push(double f)
 {
-	if (stack_pos < MAXVAL)		/* is the stack full? */
-		val[stack_pos++] = f;
+	if (stack_p < MAXVAL)		/* is the stack full? */
+		val[stack_p++] = f;
 	else
 		printf("error: stack full, can't push %g\n", f);
 }
@@ -233,11 +241,11 @@ void push(double f)
 // pop: pop and return top value off the value stack
 double pop(void)
 {
-	if (stack_pos > 0)
-		return val[--stack_pos];
+	if (stack_p > 0)            /* is the stack not empty? */
+		return val[--stack_p];  /* take top value from the stack */
 	else
 	{
-		printf(SEP "Stack is empty\n");
+		printf(SEP "Stack is empty.\n");
 		return 0.0;
 	}
 }
@@ -245,15 +253,17 @@ double pop(void)
 // getch: get a (possibly pushed) character
 int getch(void)
 {
+    /* If buffer is not empty read a character from it 
+     * else return the next character from stdin */
 	return (buf_pos > 0) ? buf[--buf_pos] : getchar();
 }
 
 // ungetch: push character back on input
 void ungetch(int c)
 {
-	if (buf_pos >= BUFSIZE)
+	if (buf_pos >= BUFSIZE)     /* is the buffer full? */
 		printf("ungetch: too many characters\n");
-	else
+	else                        /* otherwise push character */
 		buf[buf_pos++] = c;
 }
 
@@ -264,32 +274,42 @@ void check_id(char *str, struct variable var[])
 {
 	if (0 == strcmp(str, "sin")) 		/* Validate sin() */
 	{
-		if (stack_pos < 1)
+		if (stack_p < 1)
 			printf("error: stack underflow, can't call sin\n");
 		else
+        {
+			printf("Sin\t %.8f\n", val[stack_p-1]);
 			push(sin(pop()));
-	}
+        }
+    }
 	else if (0 == strcmp(str, "cos"))	/* Validate cos() */
 	{
-		if (stack_pos < 1)
+		if (stack_p < 1)
 			printf("error: stack underflow, can't call cos\n");
 		else
+        {
+            printf("Cosine\t %.8f\n", val[stack_p-1]);
 			push(cos(pop()));
-	}
+        }
+    }
 	else if (0 == strcmp(str, "exp"))	/* Validate exp() */
 	{
-		if (stack_pos < 1)
+		if (stack_p < 1)
 			printf("error: stack underflow, can't call exp\n");
 		else
+        {
+			printf("Exponent\t %.8f\n", val[stack_p-1]);
 			push(exp(pop()));
-	}
+        }
+    }
 	else if (0 == strcmp(str, "pow"))		/* Validate pow() */
 	{
-		if (stack_pos < 2)
+		if (stack_p < 2)
 			printf("error: stack underflow, can't call pow\n");
 		else
 		{
 			op2 = pop();
+            printf("Power\t%.8f ^ %.8f\n", val[stack_p-1], val[stack_p]);
 			push(pow(pop(), op2));
 		}
 	}
@@ -299,31 +319,31 @@ void check_id(char *str, struct variable var[])
 
 /* check_var : check if 'str' matches any of the variable.names
  * If found updates global array of variable's value
- * If no match is found add the variable to the array */
+ * If no match is found add the variable to the stack */
 void check_var(char *str, struct variable var[])
 {
     int i;      /* String Iterator */
 
     for (i = 0; i < MAX_VARS-1 && var[i].name[0] != '\0'; i++)
     {
-        /* Check if 'str' doesn' match any var[i].name */
+        /* Check if 'str' doesn' match any of var[i].name */
         if (!strcmp(str, var[i].name))
         { 
-            strcpy(last.name, str);
-            last.value = var[i].value;
-            push(var[i].value);
-            var_pos = i;		// update var_pos
+            strcpy(input_var.name, str);        /* Save input_var name */
+            input_var.value = var[i].value;     /* Save input_var value */
+            push(var[i].value);                 /* Push input_var value into stack */
+            var_pos = i;		                /* Update var_pos */
             return;
         }
     }
 
-    strcpy(var[i].name, str); /* If var name not found, add it */
-    strcpy(last.name, str);   /* Save last var name */
-    push(var[i].value);
-    var_pos = i;
+    strcpy(var[i].name, str);       /* If var name not found, add it */
+    strcpy(input_var.name, str);    /* Save input_var name */
+    push(var[i].value);             /* Push input_var value into stack */
+    var_pos = i;                    /* Update var_pos */
  }
 
-/* stack_ops: stack operation commands */
+/* stack_ops: handle stack operation commands */
 void stack_cmds(int cmd)
 {
 	int i;
@@ -331,20 +351,20 @@ void stack_cmds(int cmd)
 	
 	switch (cmd)
 	{
-		case '?':
+		case '?':           /* print top element of stack */
 			print_top();
 			break;
-		case '#':
+		case '#':           /* duplicate top element of stack */
 			duplicate();
 			break;
-		case '~':
+		case '~':           /* swap top two elements of stack */
 			swap();
 			break;
-		case '!':
+		case '!':           /* clear stack */
 			noPopPrint = 0;
-			clear(var);
+			clear(vars);
 			break;
-		default:
+        default:           /* handle unknown command */
 			printf("error: unknown command '%d'\n", cmd);
 			break;
 	}
@@ -354,8 +374,10 @@ void stack_cmds(int cmd)
 void view_stack(void)
 {
 	int i;
+
+    /* print stack from top to bottom */
 	printf("Stack:\t");
-	for (i = stack_pos-1; i >= 0; i--)
+	for (i = stack_p-1; i >= 0; i--)
 		printf("%.8g ", val[i]);
 	printf("\n");
 }
@@ -363,8 +385,8 @@ void view_stack(void)
 /* print_top: print top element of stack */
 void print_top(void)
 {
-	if (stack_pos > 0)
-		printf("Stack's top element: %.8g\n", val[stack_pos - 1]);
+	if (stack_p > 0)
+		printf("Stack's top element: %.8g\n", val[stack_p - 1]);
 	else
 		printf("error: stack is empty\n");
 }
@@ -372,7 +394,7 @@ void print_top(void)
 /* duplicate: duplicate top element of stack */
 void duplicate(void)
 {
-	if (stack_pos > MAXVAL-1)
+	if (stack_p > MAXVAL-1)
 		printf("error: stack full, can't duplicate\n");
 	else
 	{
@@ -387,20 +409,20 @@ void duplicate(void)
 void swap(void)
 {
 	double buffer;
-	if (stack_pos < 1)		/* if stack has less than 2 elements */
+	if (stack_p < 1)		/* if stack has less than 2 elements */
 		printf("error: not enough elements\n");
 	else
 	{
-		buffer = val[stack_pos - 1];
-		val[stack_pos - 1] = val[stack_pos - 2];
-		val[stack_pos - 2] = buffer;
+		buffer = val[stack_p - 1];
+		val[stack_p - 1] = val[stack_p - 2];
+		val[stack_p - 2] = buffer;
 	}
 }
 
 /* clear: clear stack */
 void clear(struct variable var[])
 {
-	stack_pos = 0;        /* clear stack by setting pointer to index 0 */
+	stack_p = 0;        /* clear stack by setting pointer to index 0 */
 
     /* Clear variables array by setting the first element to NULL */
     for (int i = 0; i < MAX_VARS; i++)

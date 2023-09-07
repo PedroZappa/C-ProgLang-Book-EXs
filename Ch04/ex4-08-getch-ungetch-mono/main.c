@@ -1,5 +1,5 @@
-/* Suppose there will never be more than one character of pushback. 
- * Modify getch and ungetch accordingly. */
+/* Exercise 4-8. Suppose there will never be more than one 
+ * character of pushback. Modify getch and ungetch accordingly. */
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>

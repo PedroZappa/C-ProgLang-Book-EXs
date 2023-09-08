@@ -18,7 +18,7 @@ int buffer_p;
 
 int main(void)
 {
-    int ints[] = { -1, 42, INT_MAX, INT_MIN };
+    int ints[6] = { -7, 42, INT_MIN, INT_MAX };
     int ints_n = sizeof(ints) / sizeof(ints[0]);
    
     // Render UI
@@ -26,7 +26,7 @@ int main(void)
     printf(SEP);
     for (int i = 0; i < ints_n; i++)
     {
-        printf("ints[%d] = %11d\n", i, ints[i]);
+        printf("ints[%d] = %d\n", i, ints[i]);
     }
 
     return (0);
@@ -39,22 +39,28 @@ int getint_zero(char *pn)
     int c;
     int sign;
 
-    while (isspace(c = getch()))
+    while (isspace(c = getch()))    /* skip white space */
         ;
     
     if (!isdigit(c) && c != EOF && c != '+' && c != '-')
     {
-        ungetch(c);
+        ungetch(c);     /* push character back into input stream */
         return (0);
     }
 
-    sign = (c == '-') ? -1 : 1;
+    sign = (c == '-') ? -1 : 1;     /* set sign */
 
-    while (!isdigit(c))
+    while (c == '+' || c == '-')
+    {
         c = getch();
-
+        if (!isdigit(c))
+        {
+            ungetch(sign == -1 ? '-' : '+');
+            return (0);
+        }
+    }
     for (*pn = 0; isdigit(c); c = getch())
-        *pn = *pn * 10 + (c - '0');
+        *pn = *pn * 10 + (c - '0');     /* convert to integer */
 
     *pn *= sign;
 

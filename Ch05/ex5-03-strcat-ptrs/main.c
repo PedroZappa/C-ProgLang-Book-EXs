@@ -28,7 +28,7 @@ void *ft_strcat(char *s, char *t)
     if (*s)                 /* if 's' is not null */
         while (*++s)        /* while there is a char in 's' */
             ;
-    while ((*s++ = *t++))   /* copy 't' to 's' */
+    while ((*s++ = *t++))   /* copy 't' to end of 's' */
         ;
     return s;
 }

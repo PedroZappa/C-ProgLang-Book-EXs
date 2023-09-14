@@ -26,9 +26,7 @@ int main(void)
 	// Convert int[] into strs[] w/ itoa()
 	ints_len = sizeof(ints) / sizeof(int);
 	for (i = 0; i < ints_len; i++)
-	{
 		itoa(ints[i], strs[i]);
-	}
 
 	// Render UI
 	printf("\titoa( n, s )\n");

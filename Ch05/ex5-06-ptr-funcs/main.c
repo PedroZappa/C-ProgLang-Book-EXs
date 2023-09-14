@@ -93,19 +93,11 @@ int main(void)
     }
     printf(SEP);
 
-    /* strchr() */
-    printf("ptr_strchr()\n");
-    for (i = 0; i < strs_len; i++)
-    {
-        printf("ptr_strchr(strs[%d], 'z') : %s\n", i, ptr_strchr(strs[i], 'z'));
-    }
-    printf(SEP);
-
     /* strindex() */
     printf("strindex()\n");
     for (i = 0; i < strs_len; i++)
     {
-        printf("ptr_strindex(strs[%d], 'z') : %d\n", i, ptr_strindex(in_strs[i], "z"));
+        printf("ptr_strindex(in_strs[%d], 'z') : %d\n", i, ptr_strindex(in_strs[i], "z"));
     }
     printf(SEP);
 
@@ -205,38 +197,25 @@ int ptr_strlen(char *str)
 // strindex : return first index of substring in string
 int ptr_strindex(char *str, char *sub)
 {
-    char *pstr;       // pointer to start of str
-    char *ppstr;      // pointer to pointer to str
-    char *psub;       // pointer to start of sub
+    char *pstr = str;       // pointer to start of str
+    char *ppstr;            // pointer to match start
+    char *psub = sub;       // pointer to start of sub
 
     if (!*sub)
-        return (0);
-    pstr = str;
-    while ((pstr = ptr_strchr(pstr, *sub)) != NULL)
+        return (-1);
+
+    while (*pstr++)
     {
-        psub = sub;
-        ppstr = pstr;
-        while (*psub && *ppstr == *psub)  // while characters match
+        if (*pstr == *psub)
         {
-            psub++;
-            ppstr++;
+            ppstr = pstr;
+            while (*++pstr == *++psub)
+                if (!*psub)
+                    return (ppstr - str);
+            psub = sub;
         }
-        if (*psub == '\0')
-            return (pstr - str);
-        pstr++;
     }
     return (-1);
-}
-
-// strchr : return pointer to first occurrence of character in string
-char *ptr_strchr(char *str, int c)
-{
-    char ch = c;
-
-    while (*str++ != ch)    // while current value of str is not equal to ch
-        if (*str == '\0')
-            return (NULL);
-    return (str);           // return pointer to first occurrence
 }
 
 // getop : get next operator from string

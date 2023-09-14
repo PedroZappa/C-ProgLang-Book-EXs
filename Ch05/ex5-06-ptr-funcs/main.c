@@ -10,7 +10,8 @@
 
 #define SEP	    	"===============================\n"
 #define NUMBER		0
-#define MAX     	12
+#define MAX     	9
+#define MAX_STRS   	12
 #define MAX_LEN		128
 #define BUF_SIZE    128
 
@@ -24,6 +25,7 @@ char   *ptr_strchr(char *str, int ch);
 int     ptr_getop(char *str);
 int     getch(void);
 void    ungetch(int c);
+char   *ptr_strcpy(char *dest, char *src);
 
 /* Global Variables */
 char buf[BUF_SIZE];     /* buffer for ungetch */
@@ -32,52 +34,81 @@ int buf_p = 0;          /* next free position in buf */
 
 int main(void)
 {
-    int i;                      // Loop counter
-    char strs[MAX][MAX] = {0};  // Array of strings
-    int strs_len;
+    int i;                                  // Loop counter
+    char in_strs[MAX][MAX_LEN] = {0};     // Array of strings
+    char strs[MAX][MAX_LEN] = {0};     // Array of strings
+    int strs_len;                           // Length of array of strs
+    int str_len;                            // Length of input string
 	int ints[MAX];
-    int ints_len;
-    int str_len;                // Length of input string
-    // char conv_str[MAX_LEN];     // String to convert
-    int conv_int;               // Converted integer
+    int ints_len;                           // Length of ints
 
-    /* Render UI */
+    /* Render Title */
     printf("\tPointer Funk'z\n" SEP);
 
     /* Get lines */
-    i = 0;
-    while ((str_len = ptr_getline(strs[i++], MAX)) > 0)
-        ;
+    i = strs_len = 0;
+    while ((str_len = ptr_getline(in_strs[i++], MAX_LEN)) > 0)
+        strs_len++;
     printf(SEP);
 
-    /* Convert lines */
-    strs_len = sizeof(strs) / sizeof(strs[0]);
+    /* Tests */
+    /* Print input lines & length */
     for (i = 0; i < strs_len; i++)
     {
-        conv_int = ptr_atoi(strs[i]);
-        ints[i] = conv_int;
+        printf("in_strs[%d] : '%s'\t[len: %d]\n", i, in_strs[i], ptr_strlen(in_strs[i]));
+        ptr_strcpy(strs[i], in_strs[i]);
     }
+    printf(SEP);
+    
 
-    ints_len = sizeof(ints) / sizeof(ints[0]);
+    /* ptr_atoi() */
+    printf("ptr_atoi()\n");
+    for (i = 0; i < strs_len; i++)
+    {
+        ints[i] = ptr_atoi(strs[i]);
+    }
+    ints_len = strs_len;
     for (i = 0; i < ints_len; i++)
     {
-        ptr_atoi(strs[i]);
-        printf("[%d] : '%d'\n", i, ints[i]);
+        printf("ints[%d] : '%d'\n", i, ints[i]);
     }
+    printf(SEP);
 
-    /* Print saved lines */
-    // conv_int = 0;
-    // for (i = 0; strs[i] && i < MAX; i++)
-    // {
-    //     printf("[%d] : '%s'\n", i, strs[i]);
-    //     // if str has digits, convert it to int
-    //     if ((conv_int = ptr_atoi(strs[i])) > 0)
-    //     {
-    //         printf("ptr_atoi : %d\n", conv_int);
-    //         ptr_itoa(conv_int, conv_str);
-    //         printf("ptr_itoa : '%s'\n", conv_str);
-    //     }
-    // }
+
+    /* ptr_reverse() */
+    printf("ptr_reverse()\n");
+    for (i = 0; i < strs_len; i++)
+    {
+        ptr_reverse(strs[i]);
+        printf("strs[%d] : '%s'\n", i, strs[i]);
+    }
+    printf(SEP);
+    
+    /* ptr_itoa() */
+    printf("ptr_itoa()\n");
+    for (i = 0; i < strs_len; i++)
+    {
+        ptr_itoa(ints[i], strs[i]);
+        printf("strs[%d] : '%s'\n", i, strs[i]);
+    }
+    printf(SEP);
+
+    /* strchr() */
+    printf("ptr_strchr()\n");
+    for (i = 0; i < strs_len; i++)
+    {
+        printf("ptr_strchr(strs[%d], 'z') : %s\n", i, ptr_strchr(strs[i], 'z'));
+    }
+    printf(SEP);
+
+    /* strindex() */
+    printf("strindex()\n");
+    for (i = 0; i < strs_len; i++)
+    {
+        printf("ptr_strindex(strs[%d], 'z') : %d\n", i, ptr_strindex(in_strs[i], "z"));
+    }
+    printf(SEP);
+
 
     return (0);
 }
@@ -110,7 +141,6 @@ int ptr_atoi(char *str)
         str++;
     for (n = 0; isdigit(*str); str++)
         n = 10 * n + (*str - '0');      // convert digit
-    *str = '\0';                        // null-terminate
     return (n * sign);                  // apply sign to n, return result
 }
 
@@ -146,29 +176,29 @@ char *ptr_itoa(int num, char *str)
 // reverse : reverse a string
 void ptr_reverse(char *str)
 {
-    int start, end;
-    char buffer;
+    char *pstr = str;
+    int buf;
 
-    start = 0;
-    end = ptr_strlen(str) - 1;
-    while (start < end)
-    {
-        buffer = *(str + start);
-        *(str + start) = *(str + end);
-        *(str + end) = buffer;
-        start++;
-        end--;
+    while (*pstr)       // Point pstr to the end of the string
+        pstr++;  
+    pstr--;             // points p to the last character of the string
+    while (str <= pstr)
+    {                   // Do the swap
+        buf = *str;
+        *str = *pstr;
+        *pstr = buf;
+        str++;
+        pstr--;
     }
 }
 
 // strlen : return length of string
 int ptr_strlen(char *str)
 {
-    char *pstr;
+    char *pstr = str;
 
-    pstr = str;
-    while (*pstr++)
-        ;
+    while (*pstr != '\0')
+        pstr++;
     return (pstr - str);
 }
 
@@ -250,3 +280,12 @@ void ungetch(int c)
     else
         buf[buf_p++] = c;
 }
+
+/* strcpy : copy string src to dest */
+char *ptr_strcpy(char *dest, char *src)
+{
+    char *backup = dest;
+    while ((*dest++ = *src++));
+    return (backup);
+}
+

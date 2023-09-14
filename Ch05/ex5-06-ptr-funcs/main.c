@@ -22,15 +22,7 @@ void    ptr_reverse(char *str);
 int     ptr_strlen(char *str);
 int     ptr_strindex(char *str, char *sub);
 char   *ptr_strchr(char *str, int ch);
-int     ptr_getop(char *str);
-int     getch(void);
-void    ungetch(int c);
 char   *ptr_strcpy(char *dest, char *src);
-
-/* Global Variables */
-char buf[BUF_SIZE];     /* buffer for ungetch */
-int buf_p = 0;          /* next free position in buf */
-
 
 int main(void)
 {
@@ -100,7 +92,6 @@ int main(void)
         printf("ptr_strindex(in_strs[%d], 'z') : %d\n", i, ptr_strindex(in_strs[i], "z"));
     }
     printf(SEP);
-
 
     return (0);
 }
@@ -198,66 +189,21 @@ int ptr_strlen(char *str)
 int ptr_strindex(char *str, char *sub)
 {
     char *pstr = str;       // pointer to start of str
-    char *ppstr;            // pointer to match start
     char *psub = sub;       // pointer to start of sub
 
     if (!*sub)
         return (-1);
 
-    while (*pstr++)
+    while (*pstr)
     {
         if (*pstr == *psub)
         {
-            ppstr = pstr;
-            while (*++pstr == *++psub)
-                if (!*psub)
-                    return (ppstr - str);
-            psub = sub;
+            if (*pstr++ == *psub++)
+                return (pstr - str-1);
         }
+        pstr++;
     }
     return (-1);
-}
-
-// getop : get next operator from string
-int ptr_getop(char *str)
-{
-    int c;
-
-    while ((*str++ = c = getch()) == ' ' || c == '\t')  // skip white space
-        ;
-    *str = '\0';                            // null-terminate
-    
-    // Handle Operators
-    if (!isdigit(c) && c != '.')
-        return (c);     // return operator
-    
-    // Handle Numbers
-    if (isdigit(c))    
-        while (isdigit(*str++ = c = getch()))
-            ;           // collect integer part
-    if (c == '.')
-        while (isdigit(*str++ = c = getch()))
-            ;           // collect fractional part
-    *--str = '\0';      // null-terminate
-
-    if (c != EOF)       // if not end of file
-        ungetch(c);     // Put non-digit back
-    return (NUMBER);
-}
-
-// getch : get a (possibly pushed back) character
-int getch(void)
-{
-    return (buf_p > 0) ? buf[--buf_p] : getchar();
-}
-
-// ungetch : push character back on input
-void ungetch(int c)
-{
-    if (buf_p >= BUF_SIZE)
-        printf("ungetch: too many characters\n");
-    else
-        buf[buf_p++] = c;
 }
 
 /* strcpy : copy string src to dest */

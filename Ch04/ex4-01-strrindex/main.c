@@ -83,7 +83,7 @@ int ft_atoi(char *s)
 {
 	int i, n, sign;
 
-	for (i = 0; IS_SPACE(s[i]); i++);	/* Skip leading spaces */
+	for (i = 0; IS_SPACE(s[i]); i++)	/* Skip leading spaces */
 		;
 	sign = (s[i] == '-') ? -1 : 1;		/* Set sign */
 	if (IS_SIGN(s[i]))					/* Skip sign */

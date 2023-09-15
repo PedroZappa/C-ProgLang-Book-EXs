@@ -13,12 +13,13 @@ char *lineptr[MAXLINES];        /* array of pointers to char */
 char lines[MAXLINES][MAXLEN];   /* array of lines */
 
 /* Function Prototypes */
+/* I/O */
 int ft_getline(char *s, int i);
 int ft_readlines(char *lineptr[], int nlines);
 void writelines(char *lineptr[], int nlines);
-
+/* Sorting */
 void qsort(char *lineptr[], int left, int right);
-void swap(char *v[], int left, int right);
+void swap(char *v[], int start, int end);
 
 int main()
 {
@@ -90,27 +91,28 @@ void writelines(char *lineptr[], int nlines)
 /* qsort() - quick sort 
  * *lineptr[] : is the array of pointers to char;
  * left & right : are the start and end indices of the array
- * to be sorted;
- * */
-void qsort(char *lineptr[], int left, int right)
+ * to be sorted; */
+void qsort(char *lineptr[], int start, int end)
 {
-    int i, last;
+    int i;      /* Iterator */
+    int last;   /* Pivot's position */
 
-    if (left >= right)  /* do nothing if array is empty */
-        return;         
+    /* base case */
+    if (start >= end)  /* do nothing if array */
+        return;         /* has less than 2 elements */
     /* swap the first and middle elements */
     /* ((left+right)/2) selects pivot for quicksort */
-    swap(lineptr, left, (left+right)/2);
-    last = left;    /* store pivot position */ 
+    swap(lineptr, start, (start+end)/2);
+    last = start;    /* store pivot position */ 
     /* loop through the array */
-    for (i = left+1; i <= right; i++)
+    for (i = start+1; i <= end; i++)
         /* if the current element is smaller than the pivot */
-        if (strcmp(lineptr[i], lineptr[left]) < 0)
+        if (strcmp(lineptr[i], lineptr[start]) < 0)
             swap(lineptr, ++last, i);
-    swap(lineptr, left, last);
+    swap(lineptr, start, last);
     /* Recursively sort the two subarrays */
-    qsort(lineptr, left, last-1);
-    qsort(lineptr, last+1, right);
+    qsort(lineptr, start, last-1);
+    qsort(lineptr, last+1, end);
 }
 
 /* swap() - swap two elements */

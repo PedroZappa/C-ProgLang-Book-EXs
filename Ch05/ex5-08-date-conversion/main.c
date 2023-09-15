@@ -1,17 +1,17 @@
 /* Exercise 5-8. There is no error checking in day_of_year 
  * or month_day. Remedy this defect. */
 #include <stdio.h>
+#include <stdlib.h>
 
 /* Constants */
 #define SEP         "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"      
-#define YEAR        2
 #define N_MONTHS    13      /* number of months +1 */ 
 
 /* Macros */
 #define IS_LEAP_YEAR(year) ((year%4 == 0 && year%100 != 0) || year%400 == 0)
 
 /* Global variables */
-static char daytab[YEAR][N_MONTHS] = {  
+static char daytab[][N_MONTHS] = {  
 	{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}, 
 	{0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 };
@@ -23,21 +23,31 @@ char *monthtab[N_MONTHS] = { "None", "January", "February",
 int day_of_year(int year, int month, int day);
 void month_day(int year, int yearday, int *pmonth, int *pday);
 
+/* I/O Functions */
+void validate(int year, int month, int day);
 void print_date(int month, int day, int yearday, int year);
 
 /* Date Conversion Driver */
-int main(void)
+int main(int argc, char *argv[])
 {
     int year, month, day, yearday;
     
-    printf(SEP "\tDate Conversion\n" SEP);
-    printf("Enter year:\t");
-    scanf("%d", &year);
-    printf("Enter month:\t");
-    scanf("%d", &month);
-    printf("Enter day:\t");
-    scanf("%d", &day);
+    /* Handle Invalid usage */
+    if (argc != 4)
+    {
+        printf(SEP "Usage: %s <year> <month> <day>\n" SEP, argv[0]);
+        return 1;
+    }
+    /* Parse user input */
+    year = atoi(argv[1]);
+    month = atoi(argv[2]);
+    day = atoi(argv[3]);
+    /* Validate user input */
+    validate(year, month, day);
 
+    printf(SEP "\tDate Conversion\n" SEP);
+
+    /* Calculate day of year */
     yearday = day_of_year(year, month, day);
     month_day(year, yearday, &month, &day);
 
@@ -69,9 +79,31 @@ void month_day(int year, int yearday, int *pmonth, int *pday)
 	*pday = yearday;
 }
 
+/* validate: check year, month, day */
+void validate(int year, int month, int day)
+{
+    /* Validate user input */
+    if (year < 1 || year > 9999)
+    {
+        printf(SEP "Year must be between 1 and 9999\n" SEP);
+        return ;
+    }
+    if (month < 1 || month > 12)
+    {
+        printf(SEP "Month must be between 1 and 12\n" SEP);
+        return ;
+    }
+    if (day > daytab[IS_LEAP_YEAR(year)][month])    /* Check if day exists in month */ 
+    {
+        printf(SEP "For %s, day must be between 1 and %d!\n" SEP, monthtab[month], daytab[IS_LEAP_YEAR(year)][month]);
+        return ;
+    }
+}
+
 /* print_date: print month and day */
 void print_date(int month, int day, int yearday, int year)
 {
+    printf("\t %s %d, %d\n", monthtab[month], day, year);
     if ((yearday % 10) == 1)
     {
         if (day == 1)

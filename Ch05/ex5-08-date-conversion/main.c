@@ -23,8 +23,6 @@ char *monthtab[N_MONTHS] = { "None", "January", "February",
 int day_of_year(int year, int month, int day);
 void month_day(int year, int yearday, int *pmonth, int *pday);
 
-/* I/O Functions */
-void validate(int year, int month, int day);
 void print_date(int month, int day, int yearday, int year);
 
 /* Date Conversion Driver */
@@ -38,13 +36,28 @@ int main(int argc, char *argv[])
         printf(SEP "Usage: %s <year> <month> <day>\n" SEP, argv[0]);
         return 1;
     }
-    /* Parse user input */
+    /* Parse & validate user input */
     year = atoi(argv[1]);
     month = atoi(argv[2]);
     day = atoi(argv[3]);
-    /* Validate user input */
-    validate(year, month, day);
+    if (year < 1 || year > 9999)
+    {
+        printf(SEP "Year must be between 1 and 9999\n" SEP);
+        return 1;
+    }
+    if (month < 1 || month > 12)
+    {
+        printf(SEP "Month must be between 1 and 12\n" SEP);
+        return 1;
+    }
+    if (day > daytab[IS_LEAP_YEAR(year)][month])    /* Check if day exists in month */ 
+    {
+        printf(SEP "For %s, day must be between 1 and %d!\n" SEP, 
+               monthtab[month], daytab[IS_LEAP_YEAR(year)][month]);
+        return 1;
+    }
 
+    /* Print Header */
     printf(SEP "\tDate Conversion\n" SEP);
 
     /* Calculate day of year */
@@ -53,6 +66,8 @@ int main(int argc, char *argv[])
 
     /* Print results */
     print_date(month, day, yearday, year);
+    
+    return 0;
 }
 
 
@@ -77,27 +92,6 @@ void month_day(int year, int yearday, int *pmonth, int *pday)
 		yearday -= daytab[leap][i]; 
 	*pmonth = i;
 	*pday = yearday;
-}
-
-/* validate: check year, month, day */
-void validate(int year, int month, int day)
-{
-    /* Validate user input */
-    if (year < 1 || year > 9999)
-    {
-        printf(SEP "Year must be between 1 and 9999\n" SEP);
-        return ;
-    }
-    if (month < 1 || month > 12)
-    {
-        printf(SEP "Month must be between 1 and 12\n" SEP);
-        return ;
-    }
-    if (day > daytab[IS_LEAP_YEAR(year)][month])    /* Check if day exists in month */ 
-    {
-        printf(SEP "For %s, day must be between 1 and %d!\n" SEP, monthtab[month], daytab[IS_LEAP_YEAR(year)][month]);
-        return ;
-    }
 }
 
 /* print_date: print month and day */

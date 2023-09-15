@@ -8,14 +8,16 @@
 #define MAXLEN      512
 
 /* Global variables */
-char *lineptr[MAXLINES];    /* array of pointers to char */
+char *lineptr[MAXLINES];        /* array of pointers to char */
+char lines[MAXLINES][MAXLEN];   /* array of lines */
 
 /* Function Prototypes */
-int getline(char *s, int i);
+int ft_getline(char *s, int i);
 int readlines(char *lineptr[], int nlines);
 void writelines(char *lineptr[], int nlines);
 
 void qsort(char *lineptr[], int left, int right);
+void swap(char *v[], int left, int right);
 
 int main()
 {
@@ -32,4 +34,24 @@ int main()
         printf("error: input too big to sort\n");
         return (1);
     }
+}
+
+/* ft_getline() - read a line into s, return length */
+int ft_getline(char *s, int lim)
+{
+    int c, i;
+
+    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; i++)    
+        s[i] = c;
+    if (c == '\n')
+        s[i++] = c;
+    s[i] = '\0';
+    return i;
+}
+
+/* readlines() - read input lines */
+int readlines(char *lineptr[], int maxlines)
+{
+    int len, nlines;
+    char *p;
 }

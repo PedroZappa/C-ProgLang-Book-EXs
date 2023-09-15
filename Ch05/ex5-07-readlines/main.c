@@ -29,7 +29,8 @@ int main()
 
     if ((nlines = ft_readlines(lineptr, MAXLINES)) >= 0)
     {
-        //qsort(lineptr, 0, nlines-1);
+        printf(SEP);
+        qsort(lineptr, 0, nlines-1);
         writelines(lineptr, nlines);
         return (0);
     }
@@ -43,27 +44,32 @@ int main()
 /* ft_getline() - read a line into s, return length */
 int ft_getline(char *s, int lim)
 {
-    int c, i;
+    int c, len;
 
-    for (i = 0; i < lim-1 && (c = getchar()) != EOF && c != '\n'; i++)    
-        s[i] = c;
+    len = 0;
+    while (--lim > 0 && (c = getchar()) != EOF && c != '\n')
+        s[len++] = c;
     if (c == '\n')
-        s[i++] = c;
-    s[i] = '\0';
+        s[len++] = c;
+    s[len] = '\0';
 
-    return i;
+    return (len);
 }
 
 /* readlines() - read input lines */
 int ft_readlines(char *lineptr[], int maxlines)
 {
-    int len, nlines;
+    int i, len, nlines;
+
+    /* Initialize lineptr to NULL */
+    for (i = 0; i < MAXLINES; i++)
+        lineptr[i] = NULL;
 
     nlines = 0;
-    while ((len = ft_getline(lineptr[nlines], MAXLEN)) > 0)
+    while ((len = ft_getline(lines[nlines], MAXLEN)) > 0)
     {
         if (nlines >= maxlines)
-            return -1;
+            return (-1);
         else
         {
             lines[nlines][len-1] = '\0';        /* Delete \n */

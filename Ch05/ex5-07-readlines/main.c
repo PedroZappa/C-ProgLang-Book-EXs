@@ -97,3 +97,13 @@ void qsort(char *lineptr[], int left, int right)
     qsort(lineptr, left, last-1);
     qsort(lineptr, last+1, right);
 }
+
+/* swap() - swap two elements */
+void swap(char *v[], int left, int right)
+{
+    char *temp;
+ 
+    temp = v[left];
+    v[left] = v[right];
+    v[right] = temp;
+}

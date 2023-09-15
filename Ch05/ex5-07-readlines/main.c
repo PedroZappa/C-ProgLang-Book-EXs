@@ -7,15 +7,15 @@
 #define MAXLINES    1024
 #define MAXLEN      512
 
+/* Global variables */
+char *lineptr[MAXLINES];    /* array of pointers to char */
+
 /* Function Prototypes */
-int getline(char *, int);
+int getline(char *s, int i);
 int readlines(char *lineptr[], int nlines);
 void writelines(char *lineptr[], int nlines);
 
 void qsort(char *lineptr[], int left, int right);
-
-/* Global variables */
-char *lineptr[MAXLINES];    /* array of pointers to char */
 
 int main()
 {

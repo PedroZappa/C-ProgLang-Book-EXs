@@ -11,32 +11,36 @@
 #define MAX_SIZE   1024
 
 /* Global Variables */
-int stack[MAX_SIZE];
+double stack[MAX_SIZE];
 int stack_top = 0;
 
 /* Function prototypes */
 void push(double val);
 double pop(void);
 
+void print_ops(double op1, int op, double op2);
+
 int main(int argc, char *argv[])
 {
     int i;          /* Index Iterator */
-    int op2;        /* Second operand for '-' & '/' ops */
+    double op2;        /* Second operand for '-' & '/' ops */
     char *p_arg;    /* to point to args */
 
     printf(SEP "\tEXPR Solver\n" SEP);
-    for (i = 1; i < argc; i++)   /* Read arguments starting from last */
+    
+    /* Read arguments starting from first */
+    for (i = 1; i < argc; i++)  
     {
-        p_arg = argv[i];
-        printf("argv[%d] = %s\n", i, argv[i]);
-        while (*p_arg && isdigit(*p_arg))    /* Is operand? */
+        p_arg = argv[i];    /* Point to current argument */
+        printf("argv[%d] = %s\n", i, p_arg);
+        while (*p_arg && isdigit(*p_arg))    /* Point to the e */
             p_arg++;
-        printf("*p_arg = %d, (%c)\n", *p_arg, *p_arg);
-
         switch(*p_arg)
         {
             case '+':
+                print_ops(stack[stack_top - 2], *p_arg, stack[stack_top - 1]);
                 push(pop() + pop());
+                printf("%lf\n" SEP, stack[stack_top - 1]);
                 break;
             case '-':
                 op2 = pop();
@@ -81,4 +85,10 @@ double pop(void)
         printf("Stack underflow!\n");
         return (0.0);
     }
+}
+
+/* print_ops - print the stack contents */
+void print_ops(double op1, int op, double op2)
+{
+    printf(SEP "%lf %c %lf = ", op1, op, op2);
 }

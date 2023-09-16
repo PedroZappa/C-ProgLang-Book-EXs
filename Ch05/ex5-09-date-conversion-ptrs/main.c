@@ -15,14 +15,12 @@ static char daytab[][N_MONTHS] = {
 	{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}, 
 	{0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 };
-char *monthtab[N_MONTHS] = { "None", "January", "February", 
-    "March", "April", "May", "June", "July", "August", 
-    "September", "October", "November", "December" };
 
 /* Function prototypes */
 int day_of_year(int year, int month, int day);
 void month_day(int year, int yearday, int *pmonth, int *pday);
 
+char *month_name(int n);
 void print_date(int month, int day, int yearday, int year);
 
 /* Date Conversion Driver */
@@ -53,7 +51,7 @@ int main(int argc, char *argv[])
     if (day > daytab[IS_LEAP_YEAR(year)][month])    /* Check if day exists in month */ 
     {
         printf(SEP "For %s, day must be between 1 and %d!\n" SEP, 
-               monthtab[month], daytab[IS_LEAP_YEAR(year)][month]);
+               month_name(month), daytab[IS_LEAP_YEAR(year)][month]);
         return 1;
     }
 
@@ -94,47 +92,58 @@ void month_day(int year, int yearday, int *pmonth, int *pday)
 	*pday = yearday;
 }
 
+/* month_name: print month name */
+char *month_name(int n)
+{
+    static char *monthtab[N_MONTHS] = { "Invalid month", "January", "February", 
+        "March", "April", "May", "June", "July", "August", 
+        "September", "October", "November", "December" 
+    };
+
+    return (n < 1 || n > 12) ? monthtab[0] : monthtab[n];
+}
+
 /* print_date: print month and day */
 void print_date(int month, int day, int yearday, int year)
 {
-    printf("\t %s %d, %d\n", monthtab[month], day, year);
+    printf("\t %s %d, %d\n", month_name(month), day, year);
     if ((yearday % 10) == 1)
     {
         if (day == 1)
-            printf(SEP "%s %dst is the %dst day of %d\n", monthtab[month], day, yearday, year);
+            printf(SEP "%s %dst is the %dst day of %d\n", month_name(month), day, yearday, year);
         else if (day == 2)
-            printf(SEP "%s %dnd is the %dst day of %d\n", monthtab[month], day, yearday, year);
+            printf(SEP "%s %dnd is the %dst day of %d\n", month_name(month), day, yearday, year);
         else if (day == 3)
-            printf(SEP "%s %drd is the %dst day of %d\n", monthtab[month], day, yearday, year);
+            printf(SEP "%s %drd is the %dst day of %d\n", month_name(month), day, yearday, year);
         else
-            printf(SEP "%s %dth is the %dst day of %d\n", monthtab[month], day, yearday, year);
+            printf(SEP "%s %dth is the %dst day of %d\n", month_name(month), day, yearday, year);
 
     }
     else if ((yearday % 10) == 2)
     {
         if (day == 2)
-            printf(SEP "%s %dnd is the %dnd day of %d\n", monthtab[month], day, yearday, year);
+            printf(SEP "%s %dnd is the %dnd day of %d\n", month_name(month), day, yearday, year);
         else if (day == 3)
-            printf(SEP "%s %drd is the %dnd day of %d\n", monthtab[month], day, yearday, year);
+            printf(SEP "%s %drd is the %dnd day of %d\n", month_name(month), day, yearday, year);
         else
-            printf(SEP "%s %dth is the %dnd day of %d\n", monthtab[month], day, yearday, year);
+            printf(SEP "%s %dth is the %dnd day of %d\n", month_name(month), day, yearday, year);
     }   
     else if ((yearday % 10) == 3)
     {
         if (day == 3)
-            printf(SEP "%s %drd is the %drd day of %d\n", monthtab[month], day, yearday, year);
+            printf(SEP "%s %drd is the %drd day of %d\n", month_name(month), day, yearday, year);
         else
-            printf(SEP "%s %dth is the %drd day of %d\n", monthtab[month], day, yearday, year);
+            printf(SEP "%s %dth is the %drd day of %d\n", month_name(month), day, yearday, year);
     }
     else
     {
         if (day == 1)
-            printf(SEP "%s %dst is the %dth day of %d\n", monthtab[month], day, yearday, year);
+            printf(SEP "%s %dst is the %dth day of %d\n", month_name(month), day, yearday, year);
         else if (day == 2)
-            printf(SEP "%s %dnd is the %dth day of %d\n", monthtab[month], day, yearday, year);
+            printf(SEP "%s %dnd is the %dth day of %d\n", month_name(month), day, yearday, year);
         else if (day == 3)
-            printf(SEP "%s %drd is the %dth day of %d\n", monthtab[month], day, yearday, year);
+            printf(SEP "%s %drd is the %dth day of %d\n", month_name(month), day, yearday, year);
         else
-            printf(SEP "%s %dth is the %dth day of %d\n", monthtab[month], day, yearday, year);
+            printf(SEP "%s %dth is the %dth day of %d\n", month_name(month), day, yearday, year);
     }
 }

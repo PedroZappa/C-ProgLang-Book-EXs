@@ -34,7 +34,6 @@ int main(int argc, char *argv[])
     {
         p_arg = argv[i];    /* Point to current argument */
 
-        //printf("argv[%d] = %s\n", i, p_arg);
         print_stack();
         while (*p_arg && isdigit(*p_arg))
             p_arg++;

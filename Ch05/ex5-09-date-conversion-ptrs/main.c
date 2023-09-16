@@ -16,6 +16,11 @@ static char daytab[][N_MONTHS] = {
 	{0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 };
 
+static char *monthtab[] = { "Invalid month", "January", "February", 
+    "March", "April", "May", "June", "July", "August", 
+    "September", "October", "November", "December", NULL 
+};
+
 /* Function prototypes */
 int day_of_year(int year, int month, int day);
 void month_day(int year, int yearday, int *pmonth, int *pday);
@@ -72,28 +77,30 @@ int main(int argc, char *argv[])
 /* day_of_year: set day of year from month & day */
 int day_of_year(int year, int month, int day)
 {  
-	int i, leap;
-    char *p;
+	int i;                      /* to iterate */
+    int leap;                   /* to check if leap year */        
+    char *p_days;               /* to point to daytab */
 	
-	leap = IS_LEAP_YEAR(year); /* Check if leap year */
-    p = &daytab[leap][1];  /* Pointer to number of days in month */
+	leap = IS_LEAP_YEAR(year);  /* Check if leap year */
+    p_days = &daytab[leap][1];  /* Pointer to number of days in month */
 
 	for (i = 1; i < month; i++)
-		day += *p++;           /* Add number of days in month */ 
-	return day;                /* Return number of days in year */
+		day += *p_days++;       /* Add number of days in month */ 
+
+	return day;                 /* Return number of days in year */
 }
 
 /* month_day: set month, day from day of year */  
 void month_day(int year, int yearday, int *pmonth, int *pday)
 {  
 	int i, leap;
-    char *p;
+    char *p_days;            
 	
 	leap = IS_LEAP_YEAR(year); 
-    p = &daytab[leap][1];
+    p_days = &daytab[leap][1];   /* Pointer to number of days in month */
 
-	for (i = 1; yearday > *p; i++)
-		yearday -= *p++; 
+	for (i = 1; yearday > *p_days; i++)
+		yearday -= *p_days++; 
 	*pmonth = i;
 	*pday = yearday;
 }
@@ -101,11 +108,6 @@ void month_day(int year, int yearday, int *pmonth, int *pday)
 /* month_name: print month name */
 char *month_name(int n)
 {
-    static char *monthtab[] = { "Invalid month", "January", "February", 
-        "March", "April", "May", "June", "July", "August", 
-        "September", "October", "November", "December" 
-    };
-
     return (n < 1 || n > 12) ? monthtab[0] : monthtab[n];
 }
 

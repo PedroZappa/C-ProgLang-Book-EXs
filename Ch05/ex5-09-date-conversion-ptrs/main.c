@@ -76,7 +76,7 @@ int day_of_year(int year, int month, int day)
     char *p;
 	
 	leap = IS_LEAP_YEAR(year); /* Check if leap year */
-    p = &daytab[leap][month];  /* Pointer to number of days in month */
+    p = &daytab[leap][1];  /* Pointer to number of days in month */
 
 	for (i = 1; i < month; i++)
 		day += *p++;           /* Add number of days in month */ 
@@ -87,10 +87,13 @@ int day_of_year(int year, int month, int day)
 void month_day(int year, int yearday, int *pmonth, int *pday)
 {  
 	int i, leap;
+    char *p;
 	
 	leap = IS_LEAP_YEAR(year); 
-	for (i = 1; yearday > daytab[leap][i]; i++)
-		yearday -= daytab[leap][i]; 
+    p = &daytab[leap][1];
+
+	for (i = 1; yearday > *p; i++)
+		yearday -= *p++; 
 	*pmonth = i;
 	*pday = yearday;
 }

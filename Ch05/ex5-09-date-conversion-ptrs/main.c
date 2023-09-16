@@ -76,11 +76,11 @@ int day_of_year(int year, int month, int day)
     char *p;
 	
 	leap = IS_LEAP_YEAR(year); /* Check if leap year */
-
     p = &daytab[leap][month];  /* Pointer to number of days in month */
+
 	for (i = 1; i < month; i++)
-		day += *p++;          /* Add number of days in month */ 
-	return day;             /* Return number of days in year */
+		day += *p++;           /* Add number of days in month */ 
+	return day;                /* Return number of days in year */
 }
 
 /* month_day: set month, day from day of year */  

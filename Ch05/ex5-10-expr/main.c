@@ -18,6 +18,7 @@ int stack_top = 0;
 void push(double val);
 double pop(void);
 
+void print_stack(void);
 void print_ops(double op1, int op, double op2);
 
 int main(int argc, char *argv[])
@@ -32,29 +33,37 @@ int main(int argc, char *argv[])
     for (i = 1; i < argc; i++)  
     {
         p_arg = argv[i];    /* Point to current argument */
-        printf("argv[%d] = %s\n", i, p_arg);
-        while (*p_arg && isdigit(*p_arg))    /* Point to the e */
+
+        //printf("argv[%d] = %s\n", i, p_arg);
+        print_stack();
+        while (*p_arg && isdigit(*p_arg))
             p_arg++;
         switch(*p_arg)
         {
             case '+':
                 print_ops(stack[stack_top - 2], *p_arg, stack[stack_top - 1]);
                 push(pop() + pop());
-                printf("%lf\n" SEP, stack[stack_top - 1]);
+                printf("%.3lf\n", stack[stack_top - 1]);
                 break;
             case '-':
+                print_ops(stack[stack_top - 2], *p_arg, stack[stack_top - 1]);
                 op2 = pop();
                 push(pop() - op2);
+                printf("%lf\n", stack[stack_top - 1]);
                 break;
             case '*':
+                print_ops(stack[stack_top - 2], *p_arg, stack[stack_top - 1]);
                 push(pop() * pop());
+                printf("%lf\n", stack[stack_top - 1]);
                 break;
             case '/':
+                print_ops(stack[stack_top - 2], *p_arg, stack[stack_top - 1]);
                 op2 = pop();
                 if (op2 != 0.0)
                     push(pop() / op2);
                 else
                     printf("error: Division by zero!\n");
+                printf("%lf\n", stack[stack_top - 1]);
                 break;
             case '\0':
                 push(atoi(argv[i]));
@@ -87,8 +96,17 @@ double pop(void)
     }
 }
 
+/* print_stack - print the stack contents */
+void print_stack(void)
+{
+    int i;
+    for (i = 0; i < stack_top; i++)
+        printf("%.3lf ", stack[i]);
+    printf("\n");
+}
+
 /* print_ops - print the stack contents */
 void print_ops(double op1, int op, double op2)
 {
-    printf(SEP "%lf %c %lf = ", op1, op, op2);
+    printf(SEP "%.3lf %c %.3lf = ", op1, op, op2);
 }

@@ -73,11 +73,14 @@ int main(int argc, char *argv[])
 int day_of_year(int year, int month, int day)
 {  
 	int i, leap;
+    char *p;
 	
-	leap = IS_LEAP_YEAR(year); 
+	leap = IS_LEAP_YEAR(year); /* Check if leap year */
+
+    p = &daytab[leap][month];  /* Pointer to number of days in month */
 	for (i = 1; i < month; i++)
-		day += daytab[leap][i]; 
-	return day;
+		day += *p++;          /* Add number of days in month */ 
+	return day;             /* Return number of days in year */
 }
 
 /* month_day: set month, day from day of year */  
@@ -95,7 +98,7 @@ void month_day(int year, int yearday, int *pmonth, int *pday)
 /* month_name: print month name */
 char *month_name(int n)
 {
-    static char *monthtab[N_MONTHS] = { "Invalid month", "January", "February", 
+    static char *monthtab[] = { "Invalid month", "January", "February", 
         "March", "April", "May", "June", "July", "August", 
         "September", "October", "November", "December" 
     };

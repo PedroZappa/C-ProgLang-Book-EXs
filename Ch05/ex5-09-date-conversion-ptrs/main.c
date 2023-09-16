@@ -123,7 +123,6 @@ void print_date(int month, int day, int yearday, int year)
             printf(SEP "%s %drd is the %dst day of %d\n", month_name(month), day, yearday, year);
         else
             printf(SEP "%s %dth is the %dst day of %d\n", month_name(month), day, yearday, year);
-
     }
     else if ((yearday % 10) == 2)
     {

@@ -134,6 +134,8 @@ void print_date(int month, int day, int yearday, int year)
             printf(SEP "%s %dnd is the %dnd day of %d\n", month_name(month), day, yearday, year);
         else if (day == 3)
             printf(SEP "%s %drd is the %dnd day of %d\n", month_name(month), day, yearday, year);
+        else if (day == 12)
+            printf(SEP "%s %dth is the %dth day of %d\n", month_name(month), day, yearday, year);
         else
             printf(SEP "%s %dth is the %dnd day of %d\n", month_name(month), day, yearday, year);
     }   
@@ -141,6 +143,8 @@ void print_date(int month, int day, int yearday, int year)
     {
         if (day == 3)
             printf(SEP "%s %drd is the %drd day of %d\n", month_name(month), day, yearday, year);
+        else if (day == 13)
+            printf(SEP "%s %dth is the %dth day of %d\n", month_name(month), day, yearday, year);
         else
             printf(SEP "%s %dth is the %drd day of %d\n", month_name(month), day, yearday, year);
     }

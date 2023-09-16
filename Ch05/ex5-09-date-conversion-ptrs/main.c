@@ -1,4 +1,4 @@
-/* Exercise 5-8. There is no error checking in day_of_year 
+/* Exercise 5-9. There is no error checking in day_of_year 
  * or month_day. Remedy this defect. */
 #include <stdio.h>
 #include <stdlib.h>

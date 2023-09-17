@@ -22,71 +22,97 @@ void sort_args(int[], int n);
 /* Entab Driver */
 int main(int argc, char *argv[])
 {
-    int i;                  /* Loop index */
     int c;                  /* Current input char */
     int col;                /* Column index */
-    int spaces;             /* Number of spaces ... */
-    //int tabs[MAX_TABS];     /* Array of tab stop lengths */
+    int blanks_n;             /* Number of spaces ... */
+    int tabs[MAX_TABS];     /* Array of tab stop lengths */
     int tabs_i;             /* tabs[] index Iterator Helper */ 
     int tab_base;           /* Base tab stop */
     int nxt_ts;             /* Next tab stop */
     int nxt_def_ts;         /* Next default tab stop */
 
-    int tabs[MAX_TABS] = { 7, 3, 2, 5, 1, 4, 6 };   /* Array of tab stop lengths */
-    tabs_i = sizeof(tabs) / sizeof(tabs[0]);        /* Get number of elements in the array */ 
+    //int tabs[MAX_TABS] = { 7, 3, 2, 5, 1, 4, 6 };   /* Array of tab stop lengths */
+    //tabs_i = sizeof(tabs) / sizeof(tabs[0]);        /* Get number of elements in the array */ 
 
-    printf("Pre-sort:\n");
-    /* return if too many args */
-    for (i = 0; i < tabs_i; i++)
-        printf("%d ", tabs[i]);
-    printf("\n");
-
-    /* Sort the array */
-    sort_args(tabs, MAX_TABS);
-
-    /* return if too many args */ 
-    printf("Post-sort:\n");
-    for (i = 0; i < tabs_i; i++)
-        printf("%d ", tabs[i]);
-    printf("\n");
-
-    /* Parse user input */
     /* Loop through args, convert valid args to ints and store them in tabs[] */
-    i = 0;
+    tabs_i = 0;
     while (--argc > 0)
     {
-       
-        if (i >= MAX_TABS)              /* return if too many args */
+        if (tabs_i >= MAX_TABS)              /* return if too many args */
             return 1;   
         else if (IS_DIGIT(**++argv))    /* check if the char in arg is a digit */
-            tabs[i++] = atoi(*argv);    /* convert char to int */
+            tabs[tabs_i++] = atoi(*argv);    /* convert char to int */
         else
             return (2);                 /* invalid arg */
     }
-    
-    /* If tabs[] has values */
-        /* Sort the array */
-        /* Get largest value into tab_base */
-        /* Add the TAB formula to tab_base */
-        /* Divide tab_base by DEF_TABSTOP */ 
-
+   
+    /*Set custom tabstops */
+    tab_base = 0;                       /* Will hold fallback tab stop */
+    if (tabs_i > 0)                     /* If tabs[] has values */
+    {
+        sort_args(tabs, tabs_i);        /* Sort input args (tab sizes) */
+        tab_base = tabs[tabs_i-1];      /* Get the largest custom tab stop */
+        tab_base += DEF_TABSTOP - (tab_base % DEF_TABSTOP); /* gets the next tab stop */    
+        tab_base /= DEF_TABSTOP;        /* Gets the base of the number for the operation */ 
+    }                                   /*  in the next while loop */
+    while (tabs_i < MAX_TABS)
+        tabs[tabs_i++] = tab_base * DEF_TABSTOP;     /* Set custom tab stops */
+    tabs_i = 0;
 
     /* Get lines */ 
-        /* for every char that is not a space */
-            /* */
-
-        /* switch through every char */
-            /* Count spaces */
-            /* If \n reset col and tabs_i & print char */
-            /* If tab ... */
-                /* Find next custom tab */
-                /* if next custum tab is not too big */
-                    /* subtract current col from custom tab store it in nxt_ts */
-                /* add spaces to nxt_ts */
-                
-            /* Default, print char */
-
-
+    while ((c = getchar()) != EOF)
+    {
+        /* This is the main entab loop*/
+        if (c != SPACE)           /* try for every char that is not a space */ 
+        {
+            while (blanks_n > 0)  /* Loop while there are spaces */
+            {
+                nxt_def_ts = DEF_TABSTOP - (col % DEF_TABSTOP);     /* Get next default tab stop */
+                while (tabs[tabs_i] <= col && tabs_i < MAX_TABS)    /* Find next custom tab */  
+                    tabs_i++;
+                if (tabs_i < MAX_TABS)              /* if next tabs index doesn't overflow the array */
+                    nxt_ts = tabs[tabs_i] - col;    /* subtract current col from custom tab */
+                if (nxt_def_ts <= nxt_ts && blanks_n - nxt_def_ts >= 0)
+                {   /* if next custom tab is larger than default tab ... */
+                    putchar(TAB);                   /* print \t */
+                    col += nxt_def_ts;              /* update col with the length of default tab */
+                    blanks_n -= nxt_def_ts;         /* update blanks_n wih remaining spaces */
+                }
+                else    /* if default tab is greater than custom tab */
+                {
+                    while (blanks_n > 0 && nxt_ts-- > 0)
+                    {
+                        putchar(SPACE);     /* Print spaces until custom tab is reached */
+                        col++;              /* Update col */
+                        blanks_n--;         /* Update blanks_n */
+                    }
+                }   
+            }
+        }
+        /* switch through every input char */
+        switch (c)
+        {
+        case SPACE:           
+            blanks_n++;         /* Count blanks_n */
+            break;
+        case NEW_LINE:         
+            col = 0;            /* reset col */
+            tabs_i = 0;         /* reset tabs_i */
+            putchar(c);         /* print \n */
+            break;
+        case TAB:
+            while (tabs[tabs_i] <= col && tabs_i < MAX_TABS) /* Find next custom tab */
+                tabs_i++;
+            if (tabs_i < MAX_TABS)              /* if next custum tab is not too big */
+                nxt_ts = tabs[tabs_i] - col;    /* subtract current col from custom tab */
+            blanks_n += nxt_ts;                   /* add spaces to nxt_ts */
+            break;
+        default:
+            putchar(c);     /* Default, print char */
+            col++;
+            break;             
+        }
+    }
     return 0;
 }
 

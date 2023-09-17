@@ -13,6 +13,9 @@
 #define TAB			    '\t'        /* Tab Character */
 #define NEW_LINE	    '\n'        /* New Line Character */
 
+/* Macros */
+#define IS_DIGIT(c) ((c) >= '0' && (c) <= '9')
+
 /* Function prototypes */
 void sort_args(int[], int n);
 
@@ -24,27 +27,42 @@ int main(int argc, char *argv[])
     int col;                /* Column index */
     int spaces;             /* Number of spaces ... */
     //int tabs[MAX_TABS];     /* Array of tab stop lengths */
-    int tabs_i;             /* tabs[] index Iterator */ 
+    int tabs_i;             /* tabs[] index Iterator Helper */ 
     int tab_base;           /* Base tab stop */
     int nxt_ts;             /* Next tab stop */
     int nxt_def_ts;         /* Next default tab stop */
 
-    int tabs[MAX_TABS] = { 7, 3, 2, 5, 1, 4, 6 };
+    int tabs[MAX_TABS] = { 7, 3, 2, 5, 1, 4, 6 };   /* Array of tab stop lengths */
+    tabs_i = sizeof(tabs) / sizeof(tabs[0]);        /* Get number of elements in the array */ 
+
+    printf("Pre-sort:\n");
+    /* return if too many args */
+    for (i = 0; i < tabs_i; i++)
+        printf("%d ", tabs[i]);
+    printf("\n");
+
+    /* Sort the array */
     sort_args(tabs, MAX_TABS);
 
-    /* Read number of elements in the array */ 
-    tabs_i = sizeof(tabs) / sizeof(tabs[0]);
-
-    /* Print array */ 
+    /* return if too many args */ 
+    printf("Post-sort:\n");
     for (i = 0; i < tabs_i; i++)
         printf("%d ", tabs[i]);
     printf("\n");
 
     /* Parse user input */
-    /* Loop through args */
-        /* return if too many args */
-        /* filter for ints with atoi() */
-            /* store args in tabs[] */
+    /* Loop through args, convert valid args to ints and store them in tabs[] */
+    i = 0;
+    while (--argc > 0)
+    {
+       
+        if (i >= MAX_TABS)              /* return if too many args */
+            return 1;   
+        else if (IS_DIGIT(**++argv))    /* check if the char in arg is a digit */
+            tabs[i++] = atoi(*argv);    /* convert char to int */
+        else
+            return (2);                 /* invalid arg */
+    }
     
     /* If tabs[] has values */
         /* Sort the array */

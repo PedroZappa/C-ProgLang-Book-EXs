@@ -6,12 +6,12 @@
 
 /* Constants */
 #define SEP             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-#define DEF_TABSTOP     8
-#define MAX_TABS        1024
-#define MAX_LEN         512
-#define SPACE		    ' '
-#define TAB			    '\t'
-#define NEW_LINE	    '\n'
+#define DEF_TABSTOP     8           /* Default tab stop */
+#define MAX_TABS        1024        /* Max number of tabs */
+#define MAX_LEN         512         /* Max length of line */
+#define SPACE		    ' '         /* Space Character */
+#define TAB			    '\t'        /* Tab Character */
+#define NEW_LINE	    '\n'        /* New Line Character */
 
 /* Function prototypes */
 void sort_args(int[], int n);
@@ -22,11 +22,19 @@ int main(int argc, char *argv[])
     int c;                  /* Current input char */
     int col;                /* Column index */
     int spaces;             /* Number of spaces ... */
-    int tabs[MAX_TABS];     /* Array of tab stop lengths */
+    //int tabs[MAX_TABS];     /* Array of tab stop lengths */
     int tabs_i;             /* tabs[] index Iterator */ 
     int tab_base;           /* Base tab stop */
     int nxt_ts;             /* Next tab stop */
     int nxt_def_ts;         /* Next default tab stop */
+
+    int tabs[MAX_TABS] = { 7, 3, 2, 5, 1, 4, 6 };
+    sort_args(tabs, MAX_TABS);
+
+    /* Print array */ 
+    for (tabs_i = 0; tabs_i < MAX_TABS; tabs_i++)
+        printf("%d ", tabs[tabs_i]);
+
 
     /* Parse user input */
     /* Loop through args */
@@ -34,7 +42,7 @@ int main(int argc, char *argv[])
         /* filter for ints with atoi() */
             /* store args in tabs[] */
     
-    /* If there tabs[] has values */
+    /* If tabs[] has values */
         /* Sort the array */
         /* Get largest value into tab_base */
         /* Add the TAB formula to tab_base */
@@ -58,4 +66,30 @@ int main(int argc, char *argv[])
 
 
     return 0;
+}
+
+/* sort_args : Sorts args in ascending order
+ * using the shell sort algorithm */
+void sort_args(int args[], int n)
+{
+    int i;
+    int j;      
+    int split;    /* split index */
+    int temp;     /* temp variable fr swapping */
+
+    /* Partition the array in half while each
+     * element is greater than 0 */
+    for (split = n / 2; split > 0; split /= 2) {
+        /* Loop through left half of array */
+        for (i = split; i < n; i++) 
+        {
+            /* Loop through right half of array */
+            for (j = i - split; j >= 0 && args[j] > args[j + split]; j -= split) 
+            {
+                temp = args[j];
+                args[j] = args[j + split];
+                args[j + split] = temp;
+            } 
+        }
+    }
 }

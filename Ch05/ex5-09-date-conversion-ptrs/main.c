@@ -27,6 +27,7 @@ void month_day(int year, int yearday, int *pmonth, int *pday);
 
 char *month_name(int n);
 void print_date(int month, int day, int yearday, int year);
+void print_date2(int month, int day, int yearday, int year);
 
 /* Date Conversion Driver */
 int main(int argc, char *argv[])
@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
     month_day(year, yearday, &month, &day);
 
     /* Print results */
-    print_date(month, day, yearday, year);
+    print_date2(month, day, yearday, year);
     
     return 0;
 }
@@ -159,4 +160,39 @@ void print_date(int month, int day, int yearday, int year)
         else
             printf(SEP "%s %dth is the %dth day of %d\n", month_name(month), day, yearday, year);
     }
+}
+
+
+void print_date2(int month, int day, int yearday, int year)
+{
+    char *day_suffix, *yeardaySuffix;
+
+    /* Set 'day' suffix */
+    if (day > 3 && day < 21)
+        day_suffix = "th";
+    else
+        switch (day % 10)
+        {
+            case 1:  day_suffix = "st"; break;
+            case 2:  day_suffix = "nd"; break;
+            case 3:  day_suffix = "rd"; break;
+            default: day_suffix = "th"; break;
+        }
+
+    /* Set 'yearday' suffix */
+    if (yearday > 3 && yearday < 21)
+        yeardaySuffix = "th";
+    else
+        switch (yearday % 10)
+        {
+            case 1:  yeardaySuffix = "st"; break;
+            case 2:  yeardaySuffix = "nd"; break;
+            case 3:  yeardaySuffix = "rd"; break;
+            default: yeardaySuffix = "th"; break;
+        }
+
+    /* Print results */
+    printf("\t %s %d%s, %d\n", month_name(month), day, day_suffix, year);
+    printf(SEP "%s %d%s is the %d%s day of %d\n", 
+           month_name(month), day, day_suffix, yearday, yeardaySuffix, year);
 }

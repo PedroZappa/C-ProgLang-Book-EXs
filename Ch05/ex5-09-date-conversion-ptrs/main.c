@@ -27,7 +27,6 @@ void month_day(int year, int yearday, int *pmonth, int *pday);
 
 char *month_name(int n);
 void print_date(int month, int day, int yearday, int year);
-void print_date2(int month, int day, int yearday, int year);
 
 /* Date Conversion Driver */
 int main(int argc, char *argv[])
@@ -69,7 +68,7 @@ int main(int argc, char *argv[])
     month_day(year, yearday, &month, &day);
 
     /* Print results */
-    print_date2(month, day, yearday, year);
+    print_date(month, day, yearday, year);
     
     return 0;
 }
@@ -112,58 +111,7 @@ char *month_name(int n)
     return (n < 1 || n > 12) ? monthtab[0] : monthtab[n];
 }
 
-/* print_date: print month and day */
 void print_date(int month, int day, int yearday, int year)
-{
-    printf("\t %s %d, %d\n", month_name(month), day, year);
-    if ((yearday % 10) == 1)
-    {
-        if (day == 1)
-            printf(SEP "%s %dst is the %dst day of %d\n", month_name(month), day, yearday, year);
-        else if (day == 2)
-            printf(SEP "%s %dnd is the %dst day of %d\n", month_name(month), day, yearday, year);
-        else if (day == 3)
-            printf(SEP "%s %drd is the %dst day of %d\n", month_name(month), day, yearday, year);
-        else if (day == 11)
-            printf(SEP "%s %dth is the %dth day of %d\n", month_name(month), day, yearday, year);
-        else
-            printf(SEP "%s %dth is the %dst day of %d\n", month_name(month), day, yearday, year);
-    }
-    else if ((yearday % 10) == 2)
-    {
-        if (day == 2)
-            printf(SEP "%s %dnd is the %dnd day of %d\n", month_name(month), day, yearday, year);
-        else if (day == 3)
-            printf(SEP "%s %drd is the %dnd day of %d\n", month_name(month), day, yearday, year);
-        else if (day == 12)
-            printf(SEP "%s %dth is the %dth day of %d\n", month_name(month), day, yearday, year);
-        else
-            printf(SEP "%s %dth is the %dnd day of %d\n", month_name(month), day, yearday, year);
-    }   
-    else if ((yearday % 10) == 3)
-    {
-        if (day == 3)
-            printf(SEP "%s %drd is the %drd day of %d\n", month_name(month), day, yearday, year);
-        else if (day == 13)
-            printf(SEP "%s %dth is the %dth day of %d\n", month_name(month), day, yearday, year);
-        else
-            printf(SEP "%s %dth is the %drd day of %d\n", month_name(month), day, yearday, year);
-    }
-    else
-    {
-        if (day == 1)
-            printf(SEP "%s %dst is the %dth day of %d\n", month_name(month), day, yearday, year);
-        else if (day == 2)
-            printf(SEP "%s %dnd is the %dth day of %d\n", month_name(month), day, yearday, year);
-        else if (day == 3)
-            printf(SEP "%s %drd is the %dth day of %d\n", month_name(month), day, yearday, year);
-        else
-            printf(SEP "%s %dth is the %dth day of %d\n", month_name(month), day, yearday, year);
-    }
-}
-
-
-void print_date2(int month, int day, int yearday, int year)
 {
     char *day_suffix, *yeardaySuffix;
 

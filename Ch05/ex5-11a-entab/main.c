@@ -7,7 +7,7 @@
 /* Constants */
 #define SEP             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 #define DEF_TABSTOP     8           /* Default tab stop */
-#define MAX_TABS        1024        /* Max number of tabs */
+#define MAX_TABS        12          /* Max number of tabs */
 #define MAX_LEN         512         /* Max length of line */
 #define SPACE		    ' '         /* Space Character */
 #define TAB			    '\t'        /* Tab Character */
@@ -19,6 +19,7 @@ void sort_args(int[], int n);
 /* Entab Driver */
 int main(int argc, char *argv[])
 {
+    int i;                  /* Loop index */
     int c;                  /* Current input char */
     int col;                /* Column index */
     int spaces;             /* Number of spaces ... */
@@ -31,10 +32,13 @@ int main(int argc, char *argv[])
     int tabs[MAX_TABS] = { 7, 3, 2, 5, 1, 4, 6 };
     sort_args(tabs, MAX_TABS);
 
-    /* Print array */ 
-    for (tabs_i = 0; tabs_i < MAX_TABS; tabs_i++)
-        printf("%d ", tabs[tabs_i]);
+    /* Read number of elements in the array */ 
+    tabs_i = sizeof(tabs) / sizeof(tabs[0]);
 
+    /* Print array */ 
+    for (i = 0; i < tabs_i; i++)
+        printf("%d ", tabs[i]);
+    printf("\n");
 
     /* Parse user input */
     /* Loop through args */

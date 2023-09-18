@@ -22,6 +22,7 @@ void sort_args(int[], int n);
 /* Entab Driver */
 int main(int argc, char *argv[])
 {
+    int i;
     int c;                  /* Current input char */
     int col;                /* Column index */
     int blanks_n;             /* Number of spaces ... */
@@ -31,19 +32,14 @@ int main(int argc, char *argv[])
     int nxt_ts;             /* Next tab stop */
     int nxt_def_ts;         /* Next default tab stop */
 
-    //int tabs[MAX_TABS] = { 7, 3, 2, 5, 1, 4, 6 };   /* Array of tab stop lengths */
-    //tabs_i = sizeof(tabs) / sizeof(tabs[0]);        /* Get number of elements in the array */ 
-
     /* Loop through args, convert valid args to ints and store them in tabs[] */
     tabs_i = 0;
-    while (--argc > 0)
+    for (i = 1 ; i < argc && tabs_i < MAX_TABS; i++)
     {
-        if (tabs_i >= MAX_TABS)              /* return if too many args */
-            return 1;   
-        else if (IS_DIGIT(**++argv))    /* check if the char in arg is a digit */
-            tabs[tabs_i++] = atoi(*argv);    /* convert char to int */
+        if (IS_DIGIT(*argv[i]))             /* check if the char in arg is a digit */
+            tabs[tabs_i++] = atoi(argv[i]);   /* convert char to int */
         else
-            return (2);                 /* invalid arg */
+            return (1);                     /* invalid args */
     }
    
     /*Set custom tabstops */
@@ -56,10 +52,10 @@ int main(int argc, char *argv[])
         tab_base /= DEF_TABSTOP;        /* Gets the base of the number for the operation */ 
     }                                   /*  in the next while loop */
     while (tabs_i < MAX_TABS)
-        tabs[tabs_i++] = tab_base * DEF_TABSTOP;     /* Set custom tab stops */
-    tabs_i = 0;
+        tabs[tabs_i++] = tab_base++ * DEF_TABSTOP;     /* Set custom tab stops */
 
     /* Get lines */ 
+    tabs_i = blanks_n = 0;
     while ((c = getchar()) != EOF)
     {
         /* This is the main entab loop*/

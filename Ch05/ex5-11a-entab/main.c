@@ -5,7 +5,7 @@
 
 /* Constants */
 #define SEP             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-#define RULER           "123456789x123456789x123456789x\n"
+#define RULER           "RLR 123456789x123456789x123456789x\n"
 #define DEF_TABSTOP     8           /* Default tab stop */
 #define MAX_TABS        12          /* Max number of tabs */
 #define MAX_LEN         512         /* Max length of line */
@@ -30,7 +30,7 @@ int char_c;             /* Keep track of number of chars in line */
 
 /* Function prototypes */
 void sort_args(int[], int n);
-void entab(char line[], int tab_base, int len);
+void entab(char line[], int len);
 void print_stats(void);
 
 /* Entab Driver */
@@ -100,6 +100,7 @@ int main(int argc, char *argv[])
     printf(SEP "Input Lines:\n");
     for (i = 0; i < sub_line; ++i)
         printf("%d: '%s'\n", i, lines[i]);
+    printf(RULER);
 
     /* Print line stats pre-entab*/
     printf(SEP "Line Stats before Entab:\n");
@@ -107,7 +108,7 @@ int main(int argc, char *argv[])
 
     /* Entabe lines */ 
     for (i = 0; i < sub_line; ++i)
-        entab(lines[i], tab_base, lines_len[i]);
+        entab(lines[i], lines_len[i]);
 
     /* Get line stats post-entab & print */
     printf(SEP "Line Stats after Entab:\n");
@@ -143,7 +144,7 @@ void sort_args(int args[], int n)
 }
 
 /* entab : Entab with custom tab stops */
-void entab(char line[], int tab_base, int len)
+void entab(char line[], int len)
 {
     int i;                  /* Loop index */
     int col;                /* Column index */
@@ -152,7 +153,7 @@ void entab(char line[], int tab_base, int len)
     int nxt_ts;             /* Next tab stop */
     int nxt_def_ts;         /* Next default tab stop */
 
-    tabs_i = blanks_n = 0;
+    i = tabs_i = blanks_n = 0;
     while (line[len] != '\0')
     {
         if (line[i] != SPACE)           /* try for every char that is not a space */ 

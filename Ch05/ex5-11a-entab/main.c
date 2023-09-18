@@ -34,7 +34,7 @@ int char_c;             /* Keep track of number of chars in line */
 
 /* Function prototypes */
 void sort_args(int[], int n);
-void entab(char line[], int tab_start, int tab_gap);
+void entab(char *line, int tab_start, int tab_gap);
 void print_stats(void);
 
 /* Entab Driver */
@@ -120,35 +120,45 @@ int main(int argc, char *argv[])
 }
 
 /* entab : Entab with custom tab stops */
-void entab(char line[], int tab_start, int tab_gap)
+void entab(char *line, int tab_start, int tab_gap)
 {
     int i, t;                   /* Loop index */
     int tab_sep;                /* Number of cols between tabs */
-    //char temp;                  /* Temp array for swapping */
-    char *tabbed;               /* Pointer to tabbed line */
+    int tab_started;            /* True if at tab start */
+    char *pline;                  /* Pointer to line */
 
-    i = t = tab_sep = 0;
-    while (line[i])           /* Loop through chars in line */
+    pline = line;               /* Point to line */
+    i = t = tab_sep = tab_started = 0;
+    while (line[i])             /* Loop through chars in line */
     {
         if (i == tab_start)     /* If at tab start */
         {
-            line[t] = '\t';     /* Insert tab */
+            *pline = line[i];    /* Save char */
+            *++pline = TAB;
+            //line[t] = line[i];  /* Copy char */
+            //line[t] = TAB;   /* Insert tab */
+            tab_started = 1;    /* Set flag */
             tab_sep = 0;        /* Reset column */
         }
         else
         {
-            line[t] = line[i];     /* Insert tab */
+            line[t] = line[i];  /* Copy char */
         }
-        if (tab_sep == tab_gap+1)
+        if (tab_sep == tab_gap+1)   /* handle gaps */
         {
-            line[t] = '\t';     /* Insert tab */
+            if (tab_started)
+            {
+                line[t] = TAB;     /* Insert tab */
+            }
             tab_sep = 0;
         }
         tab_sep++;              /* Increment column count */
-        i++;                    /* get next char in line */
-        t++;                    /* get next char in tabbed */
+        i++;   
+        pline++;                /* get next char in line */
+        //t++;                    /* get next char in tabbed */
     }
-    line[t] = '\0';         /* Null-terminate line */
+    pline = '\0';         /* Null-terminate line */
+    //line[t] = '\0';         /* Null-terminate line */
 }
 
 /* sort_args : Sorts args in ascending order

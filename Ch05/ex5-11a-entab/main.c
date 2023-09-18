@@ -1,11 +1,11 @@
 /* Exercise 5.11a : Entab with custom tab stops
  * The args interpreted as a squence of tab stop lengths */
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 /* Constants */
 #define SEP             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+#define RULER           "123456789x123456789x123456789x\n"
 #define DEF_TABSTOP     8           /* Default tab stop */
 #define MAX_TABS        12          /* Max number of tabs */
 #define MAX_LEN         512         /* Max length of line */
@@ -16,26 +16,29 @@
 /* Macros */
 #define IS_DIGIT(c) ((c) >= '0' && (c) <= '9')
 
+/* Global Vars */
+int tabs[MAX_TABS];     /* Array of tab stop lengths */
+char lines[MAX_LEN][MAX_LEN];   /* Array of lines */
+int lines_len[MAX_LEN];         /* Array of line lengths */
+int lines_spaces[MAX_LEN];      /* Array of line spaces */
+int lines_tabs[MAX_LEN];       /* Array of line tabs */
+int sub_line, len;              /* Line Stat Counters */
+/* Testing Vars*/
+int tabs_c;             /* Keep track of number of tabs in line */
+int space_c;            /* Keep track of number of spaces in line */
+int char_c;             /* Keep track of number of chars in line */
+
 /* Function prototypes */
 void sort_args(int[], int n);
-int  entab(char line[], int tab_base, int len);
+void entab(char line[], int tab_base, int len);
 
 /* Entab Driver */
 int main(int argc, char *argv[])
 {
-    int i;                  /* Loop index */
+    int i, j;               /* Loop indexes */
     int c;                  /* Current input char */
-    int tabs[MAX_TABS];     /* Array of tab stop lengths */
     int tabs_i;             /* tabs[] index Iterator Helper */ 
     int tab_base;           /* Base tab stop */
-    /* Testing Vars */
-    char lines[MAX_LEN][MAX_LEN];   /* Array of lines */
-    int lines_len[MAX_LEN];         /* Array of line lengths */
-    int lines_spaces[MAX_LEN];      /* Array of line spaces */
-    int lines_tabs[MAX_LEN];       /* Array of line tabs */
-    int sub_line, len;              /* Line Stat Counters */
-    int tabs_c;                     /* Keep track of number of tabs in line */
-    int space_c;                    /* Keep track of number of spaces in line */
 
     /* Loop through args, convert valid args to ints and store them in tabs[] */
     tabs_i = 0;
@@ -77,6 +80,7 @@ int main(int argc, char *argv[])
         tabs[tabs_i++] = tab_base++ * DEF_TABSTOP;     /* Set custom tab stops */
 
     /* Get lines from user */
+    printf("Type text to entab:\n");
     c = len = sub_line = 0;
     while ((c = getchar()) != EOF)
     {
@@ -91,8 +95,46 @@ int main(int argc, char *argv[])
         else ++len;
     }
 
-    /* Get lines */ 
-    printf("Type text to entab:\n");
+    /* Print input lines before entab */
+    printf(RULER "Input Lines:\n");
+    for (i = 0; i < sub_line; ++i)
+        printf("%d: '%s'\n", i, lines[i]);
+    printf(SEP);
+
+    /* Get Stats & Print lines */
+    printf(SEP);
+    for (i = 0; i < sub_line; ++i)          /* Loop through lines */
+    {
+        /* Count spaces, tabs, and chars */
+        j = space_c = tabs_c = char_c = 0;
+        while (lines[i][j] != '\0')         /* Loop through chars in line */
+        {
+            if (lines[i][j] == SPACE)        /* Count spaces */
+                ++space_c;
+            if (lines[i][j] == TAB)         /* Count tabs */
+                ++tabs_c;
+            if (lines[i][j] > ' ' && lines[i][j] <= '~') /* Count chars */
+                ++char_c;
+            ++j;
+        }
+        lines_spaces[i] = space_c;
+        lines_tabs[i] = tabs_c;
+        lines_len[i] = j;
+
+        /* Do the stats printing */
+        printf("Chars: %d; ", char_c);
+        printf("Spaces: %d; ", lines_spaces[i]);
+        printf("Tabs: %d; ", lines_tabs[i]);
+        printf("Length: %d\n", lines_len[i]);
+    }
+
+    /* Entabe lines */ 
+    for (i = 0; i < sub_line; ++i)
+        entab(lines[i], tab_base, lines_len[i]);
+
+    /* Input lines after entab */
+    
+
     return 0;
 }
 
@@ -123,7 +165,7 @@ void sort_args(int args[], int n)
 }
 
 /* entab : Entab with custom tab stops */
-int entab(char line[], int tab_base, int len)
+void entab(char line[], int tab_base, int len)
 {
     int i;                  /* Loop index */
     int col;                /* Column index */
@@ -135,7 +177,6 @@ int entab(char line[], int tab_base, int len)
     tabs_i = blanks_n = 0;
     while (line[len] != '\0')
     {
-        /* This is the main entab loop*/
         if (line[i] != SPACE)           /* try for every char that is not a space */ 
         {
             while (blanks_n > 0)  /* Loop while there are spaces */
@@ -163,30 +204,25 @@ int entab(char line[], int tab_base, int len)
             }
         }
         /* switch through every input char */
-        switch (c)
+        switch (line[i])
         {
         case SPACE:           
             blanks_n++;         /* Increment blanks_n */
-            space_c++;          /* Invcrement space_c */
             break;
         case NEW_LINE:         
             col = 0;            /* reset col */
             tabs_i = 0;         /* reset tabs_i */
-            tabs_c = 0;          /* reset tab_c */
-            space_c = 0;        /* reset space_c */
-            putchar(c);         /* print \n */
-            print_stats();      /* print stats: spaces, tabs before and after entab */
+            putchar(NEW_LINE);  /* print \n */
             break;
         case TAB:
-            tabs_c++;          /* Increment tabs_c */
             while (tabs[tabs_i] <= col && tabs_i < MAX_TABS) /* Find next custom tab */
-            tabs_i++;
+                tabs_i++;
             if (tabs_i < MAX_TABS)              /* if next custum tab is not too big */
                 nxt_ts = tabs[tabs_i] - col;    /* subtract current col from custom tab */
             blanks_n += nxt_ts;                 /* add spaces to nxt_ts */
             break;
         default:
-            putchar(c);     /* Default, print char */
+            putchar(line[i]);     /* Default, print char */
             col++;
             break;             
         }

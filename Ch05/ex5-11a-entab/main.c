@@ -157,7 +157,7 @@ void entab(char *line, int tab_start, int tab_gap)
         pline++;                /* get next char in line */
         //t++;                    /* get next char in tabbed */
     }
-    pline = '\0';         /* Null-terminate line */
+    *pline = '\0';         /* Null-terminate line */
     //line[t] = '\0';         /* Null-terminate line */
 }
 

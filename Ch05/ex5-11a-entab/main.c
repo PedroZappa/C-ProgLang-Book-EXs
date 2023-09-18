@@ -1,13 +1,15 @@
 /* Exercise 5.11a : Entab with custom tab stops
- * The args interpreted as a squence of tab stop lengths */
+ * The args interpreted as a tab_start and tab_gap.
+ * tab_start is an integer that specifies the col for the first tab 
+ * tab_gap is the number of cols between each tabs.*/
 #include <stdio.h>
 #include <stdlib.h>
 
 /* Constants */
 #define SEP             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 #define RULER           "RLR 123456789x123456789x123456789x\n"
-#define DEF_TABSTOP     8           /* Default tab stop */
-#define MAX_TABS        12          /* Max number of tabs */
+#define DEF_TABSTART    2           /* Default tab start */
+#define DEF_TABGAP      8           /* Default tab gap */
 #define MAX_LEN         512         /* Max length of line */
 #define SPACE		    ' '         /* Space Character */
 #define TAB			    '\t'        /* Tab Character */
@@ -17,8 +19,10 @@
 #define IS_DIGIT(c) ((c) >= '0' && (c) <= '9')
 
 /* Global Vars */
-int tabs[MAX_TABS];     /* Array of tab stop lengths */
 char lines[MAX_LEN][MAX_LEN];   /* Array of lines */
+/* User input Vars */
+int tab_start;          /* First tab stop position */
+int tab_gap;            /* space between tabs */
 /* Testing Vars*/
 int lines_len[MAX_LEN];         /* Array of line lengths */
 int lines_spaces[MAX_LEN];      /* Array of line spaces */
@@ -30,55 +34,50 @@ int char_c;             /* Keep track of number of chars in line */
 
 /* Function prototypes */
 void sort_args(int[], int n);
-void entab(char line[], int len);
+void entab(char line[], int tab_start, int tab_gap);
 void print_stats(void);
 
 /* Entab Driver */
 int main(int argc, char *argv[])
 {
     int i;               /* Loop indexes */
-    int c;                  /* Current input char */
-    int tabs_i;             /* tabs[] index Iterator Helper */ 
-    int tab_base;           /* Base tab stop */
-
-    /* Loop through args, convert valid args to ints and store them in tabs[] */
-    tabs_i = 0;
-    for (i = 1; i < argc && tabs_i < MAX_TABS; i++)
-    {
-        if (IS_DIGIT(*argv[i]))                 /* check if the char in arg is a digit */
-            tabs[tabs_i++] = atoi(argv[i]);     /* convert char to int */
-        else
-        {
-            printf(SEP "Invalid argument: '%s', must be integer.\n", argv[i]);
-            printf("Usage: %s [tabstop-1] [tabstop-2] ... [tabstop-n]\n" SEP, argv[0]);
-            return (1);                         /* invalid args */
-        }
-    }
+    int c;               /* Current input char */
 
     /* Render Header */
-    printf(SEP "Entab w/ ");
+    printf(SEP "Entab w/\n");
 
-    /* Print parsed custom tab stops */
-    printf("Custom Tab Stops: ");
-    for (i = 0; i < tabs_i; i++)
+    /* Loop through args, convert valid args to ints and store them in tabs[] */
+    if (argc == 3)
     {
-        printf("%d", tabs[i]);
-        if (i < tabs_i - 1)
-            printf(", ");
+        if (IS_DIGIT(*argv[1]))     /* check if the first char in arg is a digit */
+        {
+            tab_start = atoi(argv[0]);      /* convert char to int */
+            tab_gap = atoi(argv[0]++);
+            printf("tab_start = %d\n", tab_start);
+            printf("tab_gap = %d\n" SEP, tab_gap);
+        }
+        else
+        {
+            printf(SEP "Invalid argument: '%s', must be integer.\n", argv[0]);
+            printf(SEP "Usage: %s <tab_start> <tab_gap> \n" SEP, argv[0]);
+            return (1);                     /* invalid args */
+        }
     }
-    printf(";\n" SEP);
-   
-    /*Set custom tabstops */
-    tab_base = 0;                       /* Will hold fallback tab stop */
-    if (tabs_i > 0)                     /* If tabs[] has values */
+    else if (argc == 1)
     {
-        sort_args(tabs, tabs_i);        /* Sort input args (tab sizes) */
-        tab_base = tabs[tabs_i-1];      /* Get the largest custom tab stop */
-        tab_base += DEF_TABSTOP - (tab_base % DEF_TABSTOP); /* gets the next tab stop */    
-        tab_base /= DEF_TABSTOP;        /* Gets the base of the number for the operation */ 
-    }                                   /*  in the next while loop */
-    while (tabs_i < MAX_TABS)
-        tabs[tabs_i++] = tab_base++ * DEF_TABSTOP;     /* Set custom tab stops */
+        tab_start = DEF_TABSTART;  /* default tab start */
+        tab_gap = DEF_TABGAP;    /* default tab gap */
+        /* Print default entab settings */
+        printf("tab_start = %d\n", tab_start);
+        printf("tab_gap = %d\n", tab_gap);
+
+    }
+    else
+    {
+        printf(SEP "Invalid number of arguments.\n");
+        printf(SEP "Usage: %s <tab_start> <tab_gap> \n" SEP, argv[0]);
+        return (1);
+    }
 
     /* Get lines from user */
     printf("Type text to entab:\n");
@@ -101,20 +100,57 @@ int main(int argc, char *argv[])
     for (i = 0; i < sub_line; ++i)
         printf("%d: '%s'\n", i, lines[i]);
     printf(RULER);
-
     /* Print line stats pre-entab*/
     printf(SEP "Line Stats before Entab:\n");
     print_stats();
 
-    /* Entabe lines */ 
+    /* Entab lines */ 
     for (i = 0; i < sub_line; ++i)
-        entab(lines[i], lines_len[i]);
+        entab(lines[i], tab_start, tab_gap);
 
     /* Get line stats post-entab & print */
     printf(SEP "Line Stats after Entab:\n");
     print_stats();
+    /* Print input lines post-entab */
+    printf(SEP "Entabed Lines:\n");
+    for (i = 0; i < sub_line; ++i)
+        printf("%d: '%s'\n", i, lines[i]);
+    printf(RULER);
 
     return 0;
+}
+
+/* entab : Entab with custom tab stops */
+void entab(char line[], int tab_start, int tab_gap)
+{
+    int i, t;                   /* Loop index */
+    int tab_sep;                /* Number of cols between tabs */
+    //char temp;                  /* Temp array for swapping */
+    char *tabbed;               /* Pointer to tabbed line */
+
+    i = t = tab_sep = 0;
+    while (line[i])           /* Loop through chars in line */
+    {
+        tabbed = &line[i];    /* Pointer to current char */
+        if (i == tab_start)     /* If at tab start */
+        {
+            tabbed[i] = '\t';     /* Insert tab */
+            tabbed[t+1] = line[i];   /* Restore char */
+            tab_sep = 0;        /* Reset column */
+            ++t;
+        }
+        if (tab_sep == tab_gap-1)
+        {
+            line[i] = '\t';     /* Insert tab */
+            tab_sep = 0;
+            ++t;
+        }
+
+        tab_sep++;              /* Increment column count */
+        i++;                    /* get next char in line */
+        t++;                    /* get next char in tabbed */
+    }
+    line[t] = '\0';         /* Null-terminate line */
 }
 
 /* sort_args : Sorts args in ascending order
@@ -139,71 +175,6 @@ void sort_args(int args[], int n)
                 args[j] = args[j + split];
                 args[j + split] = temp;
             } 
-        }
-    }
-}
-
-/* entab : Entab with custom tab stops */
-void entab(char line[], int len)
-{
-    int i;                  /* Loop index */
-    int col;                /* Column index */
-    int blanks_n;           /* Number of spaces ... */
-    int tabs_i;             /* tabs[] index Iterator Helper */ 
-    int nxt_ts;             /* Next tab stop */
-    int nxt_def_ts;         /* Next default tab stop */
-
-    i = tabs_i = blanks_n = 0;
-    while (line[len] != '\0')
-    {
-        if (line[i] != SPACE)           /* try for every char that is not a space */ 
-        {
-            while (blanks_n > 0)  /* Loop while there are spaces */
-            {
-                nxt_def_ts = DEF_TABSTOP - (col % DEF_TABSTOP);     /* Get next default tab stop */
-                while (tabs[tabs_i] <= col && tabs_i < MAX_TABS)    /* Find next custom tab */  
-                    tabs_i++;
-                if (tabs_i < MAX_TABS)              /* if next tabs index doesn't overflow the array */
-                    nxt_ts = tabs[tabs_i] - col;    /* subtract current col from custom tab */
-                if (nxt_def_ts <= nxt_ts && blanks_n - nxt_def_ts >= 0)
-                {   /* if next custom tab is larger than default tab ... */
-                    putchar(TAB);                   /* print \t */
-                    col += nxt_def_ts;              /* update col with the length of default tab */
-                    blanks_n -= nxt_def_ts;         /* update blanks_n wih remaining spaces */
-                }
-                else    /* if default tab is greater than custom tab */
-                {
-                    while (blanks_n > 0 && nxt_ts-- > 0)
-                    {
-                        putchar(SPACE);     /* Print spaces until custom tab is reached */
-                        col++;              /* Update col */
-                        blanks_n--;         /* Update blanks_n */
-                    }
-                }   
-            }
-        }
-        /* switch through every input char */
-        switch (line[i])
-        {
-        case SPACE:           
-            blanks_n++;         /* Increment blanks_n */
-            break;
-        case NEW_LINE:         
-            col = 0;            /* reset col */
-            tabs_i = 0;         /* reset tabs_i */
-            putchar(NEW_LINE);  /* print \n */
-            break;
-        case TAB:
-            while (tabs[tabs_i] <= col && tabs_i < MAX_TABS) /* Find next custom tab */
-                tabs_i++;
-            if (tabs_i < MAX_TABS)              /* if next custum tab is not too big */
-                nxt_ts = tabs[tabs_i] - col;    /* subtract current col from custom tab */
-            blanks_n += nxt_ts;                 /* add spaces to nxt_ts */
-            break;
-        default:
-            putchar(line[i]);     /* Default, print char */
-            col++;
-            break;             
         }
     }
 }

@@ -133,32 +133,24 @@ void entab(char *line, int tab_start, int tab_gap)
     {
         if (i == tab_start)     /* If at tab start */
         {
-            *pline = line[i];    /* Save char */
-            *++pline = TAB;
-            //line[t] = line[i];  /* Copy char */
-            //line[t] = TAB;   /* Insert tab */
+            line[t] = line[i];  /* Copy char */
+            line[t] = TAB;   /* Insert tab */
             tab_started = 1;    /* Set flag */
             tab_sep = 0;        /* Reset column */
         }
         else
-        {
             line[t] = line[i];  /* Copy char */
-        }
         if (tab_sep == tab_gap+1)   /* handle gaps */
         {
             if (tab_started)
-            {
                 line[t] = TAB;     /* Insert tab */
-            }
             tab_sep = 0;
         }
         tab_sep++;              /* Increment column count */
         i++;   
-        pline++;                /* get next char in line */
-        //t++;                    /* get next char in tabbed */
+        t++;                    /* get next char in tabbed */
     }
-    *pline = '\0';         /* Null-terminate line */
-    //line[t] = '\0';         /* Null-terminate line */
+    line[t] = '\0';         /* Null-terminate line */
 }
 
 /* sort_args : Sorts args in ascending order

@@ -19,11 +19,11 @@
 /* Global Vars */
 int tabs[MAX_TABS];     /* Array of tab stop lengths */
 char lines[MAX_LEN][MAX_LEN];   /* Array of lines */
+/* Testing Vars*/
 int lines_len[MAX_LEN];         /* Array of line lengths */
 int lines_spaces[MAX_LEN];      /* Array of line spaces */
 int lines_tabs[MAX_LEN];       /* Array of line tabs */
 int sub_line, len;              /* Line Stat Counters */
-/* Testing Vars*/
 int tabs_c;             /* Keep track of number of tabs in line */
 int space_c;            /* Keep track of number of spaces in line */
 int char_c;             /* Keep track of number of chars in line */
@@ -31,11 +31,12 @@ int char_c;             /* Keep track of number of chars in line */
 /* Function prototypes */
 void sort_args(int[], int n);
 void entab(char line[], int tab_base, int len);
+void print_stats(void);
 
 /* Entab Driver */
 int main(int argc, char *argv[])
 {
-    int i, j;               /* Loop indexes */
+    int i;               /* Loop indexes */
     int c;                  /* Current input char */
     int tabs_i;             /* tabs[] index Iterator Helper */ 
     int tab_base;           /* Base tab stop */
@@ -95,45 +96,22 @@ int main(int argc, char *argv[])
         else ++len;
     }
 
-    /* Print input lines before entab */
-    printf(RULER "Input Lines:\n");
+    /* Print input lines pre-entab */
+    printf(SEP "Input Lines:\n");
     for (i = 0; i < sub_line; ++i)
         printf("%d: '%s'\n", i, lines[i]);
-    printf(SEP);
 
-    /* Get Stats & Print lines */
-    printf(SEP);
-    for (i = 0; i < sub_line; ++i)          /* Loop through lines */
-    {
-        /* Count spaces, tabs, and chars */
-        j = space_c = tabs_c = char_c = 0;
-        while (lines[i][j] != '\0')         /* Loop through chars in line */
-        {
-            if (lines[i][j] == SPACE)        /* Count spaces */
-                ++space_c;
-            if (lines[i][j] == TAB)         /* Count tabs */
-                ++tabs_c;
-            if (lines[i][j] > ' ' && lines[i][j] <= '~') /* Count chars */
-                ++char_c;
-            ++j;
-        }
-        lines_spaces[i] = space_c;
-        lines_tabs[i] = tabs_c;
-        lines_len[i] = j;
-
-        /* Do the stats printing */
-        printf("Chars: %d; ", char_c);
-        printf("Spaces: %d; ", lines_spaces[i]);
-        printf("Tabs: %d; ", lines_tabs[i]);
-        printf("Length: %d\n", lines_len[i]);
-    }
+    /* Print line stats pre-entab*/
+    printf(SEP "Line Stats before Entab:\n");
+    print_stats();
 
     /* Entabe lines */ 
     for (i = 0; i < sub_line; ++i)
         entab(lines[i], tab_base, lines_len[i]);
 
-    /* Input lines after entab */
-    
+    /* Get line stats post-entab & print */
+    printf(SEP "Line Stats after Entab:\n");
+    print_stats();
 
     return 0;
 }
@@ -226,5 +204,38 @@ void entab(char line[], int tab_base, int len)
             col++;
             break;             
         }
+    }
+}
+
+/* print_stats : Prints number of spaces, 
+ * tabs, and chars per line */
+void print_stats(void)
+{
+    int i, j;
+
+    for (i = 0; i < sub_line; ++i)          /* Loop through lines */
+    {
+        /* Count spaces, tabs, and chars */
+        j = space_c = tabs_c = char_c = 0;
+        while (lines[i][j] != '\0')         /* Loop through chars in line */
+        {
+            if (lines[i][j] == SPACE)        /* Count spaces */
+                ++space_c;
+            if (lines[i][j] == TAB)         /* Count tabs */
+                ++tabs_c;
+            if (lines[i][j] > ' ' && lines[i][j] <= '~') /* Count chars */
+                ++char_c;
+            ++j;
+        }
+        lines_spaces[i] = space_c;
+        lines_tabs[i] = tabs_c;
+        lines_len[i] = j;
+
+        /* Do the stats printing */
+        printf("[%d] ", i);
+        printf("Chars: %d; ", char_c);
+        printf("Spaces: %d; ", lines_spaces[i]);
+        printf("Tabs: %d; ", lines_tabs[i]);
+        printf("Length: %d\n", lines_len[i]);
     }
 }

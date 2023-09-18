@@ -9,7 +9,7 @@
 #define SEP             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 #define RULER           "RLR 123456789x123456789x123456789x\n"
 #define TABSTART    2           /* Default tab start */
-#define TABGAP      8           /* Default tab gap */
+#define TABGAP      4           /* Default tab gap */
 #define MAX_LEN         512         /* Max length of line */
 #define SPACE		    ' '         /* Space Character */
 #define TAB			    '\t'        /* Tab Character */
@@ -138,7 +138,11 @@ void entab(char line[], int tab_start, int tab_gap)
         else
         {
             line[t] = line[i];     /* Insert tab */
-            tab_sep++;
+        }
+        if (tab_sep == tab_gap+1)
+        {
+            line[t] = '\t';     /* Insert tab */
+            tab_sep = 0;
         }
         tab_sep++;              /* Increment column count */
         i++;                    /* get next char in line */

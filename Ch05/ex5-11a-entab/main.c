@@ -8,8 +8,8 @@
 /* Constants */
 #define SEP             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 #define RULER           "RLR 123456789x123456789x123456789x\n"
-#define DEF_TABSTART    2           /* Default tab start */
-#define DEF_TABGAP      8           /* Default tab gap */
+#define TABSTART    2           /* Default tab start */
+#define TABGAP      8           /* Default tab gap */
 #define MAX_LEN         512         /* Max length of line */
 #define SPACE		    ' '         /* Space Character */
 #define TAB			    '\t'        /* Tab Character */
@@ -51,8 +51,8 @@ int main(int argc, char *argv[])
     {
         if (IS_DIGIT(*argv[1]))     /* check if the first char in arg is a digit */
         {
-            tab_start = atoi(argv[0]);      /* convert char to int */
-            tab_gap = atoi(argv[0]++);
+            tab_start = atoi(argv[1]);      /* convert char to int */
+            tab_gap = atoi(argv[2]);
             printf("tab_start = %d\n", tab_start);
             printf("tab_gap = %d\n" SEP, tab_gap);
         }
@@ -65,12 +65,11 @@ int main(int argc, char *argv[])
     }
     else if (argc == 1)
     {
-        tab_start = DEF_TABSTART;  /* default tab start */
-        tab_gap = DEF_TABGAP;    /* default tab gap */
+        tab_start = TABSTART;   /* default tab start */
+        tab_gap = TABGAP;       /* default tab gap */
         /* Print default entab settings */
         printf("tab_start = %d\n", tab_start);
         printf("tab_gap = %d\n", tab_gap);
-
     }
     else
     {
@@ -101,7 +100,7 @@ int main(int argc, char *argv[])
         printf("%d: '%s'\n", i, lines[i]);
     printf(RULER);
     /* Print line stats pre-entab*/
-    printf(SEP "Line Stats before Entab:\n");
+    printf(SEP "\tLine Stats before Entab:\n");
     print_stats();
 
     /* Entab lines */ 
@@ -109,7 +108,7 @@ int main(int argc, char *argv[])
         entab(lines[i], tab_start, tab_gap);
 
     /* Get line stats post-entab & print */
-    printf(SEP "Line Stats after Entab:\n");
+    printf(SEP "\tLine Stats after Entab:\n");
     print_stats();
     /* Print input lines post-entab */
     printf(SEP "Entabed Lines:\n");
@@ -131,21 +130,16 @@ void entab(char line[], int tab_start, int tab_gap)
     i = t = tab_sep = 0;
     while (line[i])           /* Loop through chars in line */
     {
-        tabbed = &line[i];    /* Pointer to current char */
         if (i == tab_start)     /* If at tab start */
         {
-            tabbed[i] = '\t';     /* Insert tab */
-            tabbed[t+1] = line[i];   /* Restore char */
+            line[t] = '\t';     /* Insert tab */
             tab_sep = 0;        /* Reset column */
-            ++t;
         }
-        if (tab_sep == tab_gap-1)
+        else
         {
-            line[i] = '\t';     /* Insert tab */
-            tab_sep = 0;
-            ++t;
+            line[t] = line[i];     /* Insert tab */
+            tab_sep++;
         }
-
         tab_sep++;              /* Increment column count */
         i++;                    /* get next char in line */
         t++;                    /* get next char in tabbed */
@@ -169,7 +163,7 @@ void sort_args(int args[], int n)
         for (i = split; i < n; i++) 
         {
             /* Loop through right half of array */
-            for (j = i - split; j >= 0 && args[j] > args[j + split]; j -= split) 
+            for (j = (i - split); j >= 0 && args[j] > args[j + split]; j -= split) 
             {
                 temp = args[j];
                 args[j] = args[j + split];

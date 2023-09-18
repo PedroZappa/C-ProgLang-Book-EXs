@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 /* Constants */
-#define SEP             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+#define SEP             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 #define DEF_TABSTOP     8           /* Default tab stop */
 #define MAX_TABS        12          /* Max number of tabs */
 #define MAX_LEN         512         /* Max length of line */
@@ -34,13 +34,26 @@ int main(int argc, char *argv[])
 
     /* Loop through args, convert valid args to ints and store them in tabs[] */
     tabs_i = 0;
-    for (i = 1 ; i < argc && tabs_i < MAX_TABS; i++)
+    for (i = 1; i < argc && tabs_i < MAX_TABS; i++)
     {
-        if (IS_DIGIT(*argv[i]))             /* check if the char in arg is a digit */
-            tabs[tabs_i++] = atoi(argv[i]);   /* convert char to int */
+        if (IS_DIGIT(*argv[i]))                 /* check if the char in arg is a digit */
+            tabs[tabs_i++] = atoi(argv[i]);     /* convert char to int */
         else
-            return (1);                     /* invalid args */
+            return (1);                         /* invalid args */
     }
+
+    /* Render Header */
+    printf(SEP "Entab w/ ");
+
+    /* Print parsed custom tab stops */
+    printf("Custom Tab Stops: ");
+    for (i = 0; i < tabs_i; i++)
+    {
+        printf("%d", tabs[i]);
+        if (i < tabs_i - 1)
+            printf(", ");
+    }
+    printf(";\n" SEP);
    
     /*Set custom tabstops */
     tab_base = 0;                       /* Will hold fallback tab stop */

@@ -22,7 +22,7 @@ void sort_args(int[], int n);
 /* Entab Driver */
 int main(int argc, char *argv[])
 {
-    int i;
+    int i;                  /* Loop index */
     int c;                  /* Current input char */
     int col;                /* Column index */
     int blanks_n;             /* Number of spaces ... */
@@ -31,6 +31,9 @@ int main(int argc, char *argv[])
     int tab_base;           /* Base tab stop */
     int nxt_ts;             /* Next tab stop */
     int nxt_def_ts;         /* Next default tab stop */
+    /* Testing Vars */
+    int tabs_c;              /* Keep track of number of tabs in line */
+    int space_c;            /* Keep track of number of spaces in line */
 
     /* Loop through args, convert valid args to ints and store them in tabs[] */
     tabs_i = 0;
@@ -71,7 +74,9 @@ int main(int argc, char *argv[])
     while (tabs_i < MAX_TABS)
         tabs[tabs_i++] = tab_base++ * DEF_TABSTOP;     /* Set custom tab stops */
 
+
     /* Get lines */ 
+    printf("Type text to entab:\n");
     tabs_i = blanks_n = 0;
     while ((c = getchar()) != EOF)
     {
@@ -106,19 +111,24 @@ int main(int argc, char *argv[])
         switch (c)
         {
         case SPACE:           
-            blanks_n++;         /* Count blanks_n */
+            blanks_n++;         /* Increment blanks_n */
+            space_c++;          /* Invcrement space_c */
             break;
         case NEW_LINE:         
             col = 0;            /* reset col */
             tabs_i = 0;         /* reset tabs_i */
+            tabs_c = 0;          /* reset tab_c */
+            space_c = 0;        /* reset space_c */
             putchar(c);         /* print \n */
+            print_stats();      /* print stats: spaces, tabs before and after entab */
             break;
         case TAB:
+            tabs_c++;          /* Increment tabs_c */
             while (tabs[tabs_i] <= col && tabs_i < MAX_TABS) /* Find next custom tab */
                 tabs_i++;
             if (tabs_i < MAX_TABS)              /* if next custum tab is not too big */
                 nxt_ts = tabs[tabs_i] - col;    /* subtract current col from custom tab */
-            blanks_n += nxt_ts;                   /* add spaces to nxt_ts */
+            blanks_n += nxt_ts;                 /* add spaces to nxt_ts */
             break;
         default:
             putchar(c);     /* Default, print char */

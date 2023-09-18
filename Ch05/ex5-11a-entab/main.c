@@ -39,7 +39,11 @@ int main(int argc, char *argv[])
         if (IS_DIGIT(*argv[i]))                 /* check if the char in arg is a digit */
             tabs[tabs_i++] = atoi(argv[i]);     /* convert char to int */
         else
+        {
+            printf(SEP "Invalid argument: '%s', must be integer.\n", argv[i]);
+            printf("Usage: %s [tabstop-1] [tabstop-2] ... [tabstop-n]\n" SEP, argv[0]);
             return (1);                         /* invalid args */
+        }
     }
 
     /* Render Header */

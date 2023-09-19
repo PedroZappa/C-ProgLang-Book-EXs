@@ -8,8 +8,8 @@
 /* Constants */
 #define SEP             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 #define RULER           "RLR 123456789x123456789x123456789x\n"
-#define TABSTART    2           /* Default tab start */
-#define TABGAP      4           /* Default tab gap */
+#define TABSTART        2           /* Default tab start */
+#define TABGAP          4           /* Default tab gap */
 #define MAX_LEN         512         /* Max length of line */
 #define SPACE		    ' '         /* Space Character */
 #define TAB			    '\t'        /* Tab Character */
@@ -34,6 +34,7 @@ int char_c;             /* Keep track of number of chars in line */
 
 /* Function prototypes */
 void ft_getline(char line[], int lim);
+int parse_args(int argc, char *argv[]);
 void sort_args(int[], int n);
 void entab(char *line, int tab_start, int tab_gap);
 void print_stats(void);
@@ -46,37 +47,8 @@ int main(int argc, char *argv[])
     /* Render Header */
     printf(SEP "Entab w/\n");
 
-    /* Loop through args, convert valid args to ints and store them in tabs[] */
-    if (argc == 3)
-    {
-        if (IS_DIGIT(*argv[1]))     /* check if the first char in arg is a digit */
-        {
-            tab_start = atoi(argv[1]);      /* convert char to int */
-            tab_gap = atoi(argv[2]);
-            printf("tab_start = %d\n", tab_start);
-            printf("tab_gap = %d\n" SEP, tab_gap);
-        }
-        else
-        {
-            printf(SEP "Invalid argument: '%s', must be integer.\n", argv[0]);
-            printf(SEP "Usage: %s <tab_start> <tab_gap> \n" SEP, argv[0]);
-            return (1);                     /* invalid args */
-        }
-    }
-    else if (argc == 1)
-    {
-        tab_start = TABSTART;   /* default tab start */
-        tab_gap = TABGAP;       /* default tab gap */
-        /* Print default entab settings */
-        printf("tab_start = %d\n", tab_start);
-        printf("tab_gap = %d\n", tab_gap);
-    }
-    else
-    {
-        printf(SEP "Invalid number of arguments.\n");
-        printf(SEP "Usage: %s <tab_start> <tab_gap> \n" SEP, argv[0]);
-        return (1);
-    }
+    if (parse_args(argc, argv))     /* Loop through args, convert valid args to ints */
+        return (1);                 /* and store them in tab_start & tab_gap */
 
     printf("Type text to entab:\n");            /* Get lines from user */
     ft_getline(lines[sub_line], MAX_LEN);
@@ -132,6 +104,63 @@ void entab(char *line, int tab_start, int tab_gap)
         t++;                    /* get next char in tabbed */
     }
     line[t] = '\0';         /* Null-terminate line */
+}
+
+int parse_args(int argc, char *argv[])
+{
+    if (argc == 3)
+    {
+        if (IS_DIGIT(*argv[1]))     /* check if the first char in arg is a digit */
+        {
+            tab_start = atoi(argv[1]);      /* convert char to int */
+            tab_gap = atoi(argv[2]);
+            printf("tab_start = %d\n", tab_start);
+            printf("tab_gap = %d\n" SEP, tab_gap);
+        }
+        else
+        {
+            printf(SEP "Invalid argument: '%s', must be integer.\n", argv[0]);
+            printf(SEP "Usage: %s <tab_start> <tab_gap> \n" SEP, argv[0]);
+            return (1);                     /* invalid args */
+        }
+    }
+    else if (argc == 1)
+    {
+        tab_start = TABSTART;   /* default tab start */
+        tab_gap = TABGAP;       /* default tab gap */
+        /* Print default entab settings */
+        printf("tab_start = %d\n", tab_start);
+        printf("tab_gap = %d\n", tab_gap);
+    }
+    else
+    {
+        printf(SEP "Invalid number of arguments.\n");
+        printf(SEP "Usage: %s <tab_start> <tab_gap> \n" SEP, argv[0]);
+        return (1);
+    }
+    return (0); 
+}
+
+/* getline : Get a line of input from user */
+void ft_getline(char line[], int lim)
+{
+    int c;
+    int len;
+
+    c = len = sub_line = 0;
+    while ((c = getchar()) != EOF)
+    {
+        lines[sub_line][len] = c;
+        if (c == '\n')
+        {
+            lines[sub_line][len] = '\0';    /* Null-terminate line */
+            lines_len[sub_line] = len;      /* Store line length */
+            sub_line++;                     /* Get next line */
+            len = 0;                        /* Reset line length */
+        }
+        else ++len;
+    }
+
 }
 
 /* sort_args : Sorts args in ascending order
@@ -191,26 +220,4 @@ void print_stats(void)
         printf("Tabs: %d; ", lines_tabs[i]);
         printf("Length: %d\n", lines_len[i]);
     }
-}
-
-/* getline : Get a line of input from user */
-void ft_getline(char line[], int lim)
-{
-    int c;
-    int len;
-
-    c = len = sub_line = 0;
-    while ((c = getchar()) != EOF)
-    {
-        lines[sub_line][len] = c;
-        if (c == '\n')
-        {
-            lines[sub_line][len] = '\0';    /* Null-terminate line */
-            lines_len[sub_line] = len;      /* Store line length */
-            sub_line++;                     /* Get next line */
-            len = 0;                        /* Reset line length */
-        }
-        else ++len;
-    }
-
 }

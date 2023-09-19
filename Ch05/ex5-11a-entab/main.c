@@ -27,12 +27,13 @@ int tab_gap;            /* space between tabs */
 int lines_len[MAX_LEN];         /* Array of line lengths */
 int lines_spaces[MAX_LEN];      /* Array of line spaces */
 int lines_tabs[MAX_LEN];       /* Array of line tabs */
-int sub_line, len;              /* Line Stat Counters */
+int sub_line;              /* Line Stat Counters */
 int tabs_c;             /* Keep track of number of tabs in line */
 int space_c;            /* Keep track of number of spaces in line */
 int char_c;             /* Keep track of number of chars in line */
 
 /* Function prototypes */
+void ft_getline(char line[], int lim);
 void sort_args(int[], int n);
 void entab(char *line, int tab_start, int tab_gap);
 void print_stats(void);
@@ -41,7 +42,6 @@ void print_stats(void);
 int main(int argc, char *argv[])
 {
     int i;               /* Loop indexes */
-    int c;               /* Current input char */
 
     /* Render Header */
     printf(SEP "Entab w/\n");
@@ -78,43 +78,25 @@ int main(int argc, char *argv[])
         return (1);
     }
 
-    /* Get lines from user */
-    printf("Type text to entab:\n");
-    c = len = sub_line = 0;
-    while ((c = getchar()) != EOF)
-    {
-        lines[sub_line][len] = c;
-        if (c == '\n')
-        {
-            lines[sub_line][len] = '\0';    /* Null-terminate line */
-            lines_len[sub_line] = len;      /* Store line length */
-            sub_line++;                     /* Get next line */
-            len = 0;                        /* Reset line length */
-        }
-        else ++len;
-    }
+    printf("Type text to entab:\n");            /* Get lines from user */
+    ft_getline(lines[sub_line], MAX_LEN);
 
-    /* Print input lines pre-entab */
-    printf(SEP "Input Lines:\n");
+    printf(SEP "Input Lines:\n");               /* Print input lines pre-entab */
     for (i = 0; i < sub_line; ++i)
         printf("%d: '%s'\n", i, lines[i]);
     printf(RULER);
-    /* Print line stats pre-entab*/
-    printf(SEP "\tLine Stats before Entab:\n");
+    printf(SEP "\tLine Stats before Entab:\n"); /* Print line stats pre-entab*/
     print_stats();
 
-    /* Entab lines */ 
-    for (i = 0; i < sub_line; ++i)
+    for (i = 0; i < sub_line; ++i)              /* Entab lines */ 
         entab(lines[i], tab_start, tab_gap);
 
-    /* Get line stats post-entab & print */
-    printf(SEP "\tLine Stats after Entab:\n");
-    print_stats();
-    /* Print input lines post-entab */
-    printf(SEP "Entabed Lines:\n");
+    printf(SEP "Entabed Lines:\n");             /* Print input lines post-entab */
     for (i = 0; i < sub_line; ++i)
         printf("%d: '%s'\n", i, lines[i]);
     printf(RULER);
+    printf(SEP "\tLine Stats after Entab:\n");  /* Get line stats post-entab & print */
+    print_stats();
 
     return 0;
 }
@@ -125,9 +107,7 @@ void entab(char *line, int tab_start, int tab_gap)
     int i, t;                   /* Loop index */
     int tab_sep;                /* Number of cols between tabs */
     int tab_started;            /* True if at tab start */
-    char *pline;                  /* Pointer to line */
 
-    pline = line;               /* Point to line */
     i = t = tab_sep = tab_started = 0;
     while (line[i])             /* Loop through chars in line */
     {
@@ -140,6 +120,7 @@ void entab(char *line, int tab_start, int tab_gap)
         }
         else
             line[t] = line[i];  /* Copy char */
+
         if (tab_sep == tab_gap+1)   /* handle gaps */
         {
             if (tab_started)
@@ -163,7 +144,7 @@ void sort_args(int args[], int n)
     int temp;     /* temp variable fr swapping */
 
     /* Partition the array in half while each
-     * element is greater than 0 */
+     * partition is greater than 0 */
     for (split = n / 2; split > 0; split /= 2) {
         /* Loop through left half of array */
         for (i = split; i < n; i++) 
@@ -189,7 +170,7 @@ void print_stats(void)
     {
         /* Count spaces, tabs, and chars */
         j = space_c = tabs_c = char_c = 0;
-        while (lines[i][j] != '\0')         /* Loop through chars in line */
+        while (lines[i][j])         /* Loop through chars in line */
         {
             if (lines[i][j] == SPACE)        /* Count spaces */
                 ++space_c;
@@ -210,4 +191,26 @@ void print_stats(void)
         printf("Tabs: %d; ", lines_tabs[i]);
         printf("Length: %d\n", lines_len[i]);
     }
+}
+
+/* getline : Get a line of input from user */
+void ft_getline(char line[], int lim)
+{
+    int c;
+    int len;
+
+    c = len = sub_line = 0;
+    while ((c = getchar()) != EOF)
+    {
+        lines[sub_line][len] = c;
+        if (c == '\n')
+        {
+            lines[sub_line][len] = '\0';    /* Null-terminate line */
+            lines_len[sub_line] = len;      /* Store line length */
+            sub_line++;                     /* Get next line */
+            len = 0;                        /* Reset line length */
+        }
+        else ++len;
+    }
+
 }
